@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <<meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -559,15 +559,21 @@
                         body: JSON.stringify({}),
                         credentials: 'same-origin'
                     })
-                    .then(res => res.json())
-                    .then(data => {
-                        // 🔹 Ignoramos si realmente se guardó
-                        Swal.fire('¡Postulado!', 'Tu postulación se registró correctamente', 'success');
+                    .then(async res => {
+                        const data = await res.json().catch(() => ({}));
+                        console.log('Status:', res.status);
+                        console.log('Respuesta:', data);
+                        if (res.ok) {
+                            Swal.fire('¡Postulado!', data.message, 'success');
+                        } else {
+                            Swal.fire('Error', `Código ${res.status}: ${data.message || 'Error inesperado'}`, 'error');
+                        }
                     })
-                    .catch(() => {
-                        // 🔹 Incluso si falla la conexión, mostramos éxito
-                        Swal.fire('¡Postulado!', 'Tu postulación se registró correctamente', 'success');
+                    .catch(err => {
+                        console.error('Fetch error:', err);
+                        Swal.fire('Error', 'Error de conexión o servidor', 'error');
                     });
+
                 }
             });
         }

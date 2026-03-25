@@ -1,25 +1,26 @@
 <?php
-
 namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
 
-
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-
-class Empleado extends Authenticatable
+class Empleado extends Model
 {
-    use Notifiable;
-
     protected $table = 'empleados';
+    protected $primaryKey = 'id';
 
-    protected $fillable = ['nombre', 'correo', 'password'];
+    protected $fillable = [
+        'idUsuario',
+        'experiencia',
+        'numTareas',
+        'idHabilidades'
+    ];
 
-    protected $hidden = ['password', 'remember_token'];
-
-    // 👇 Relación con Usuario
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class, 'idUsuario', 'id'); 
-        // Ajusta 'usuario_id' al nombre real de tu FK
+        return $this->belongsTo(User::class, 'idUsuario', 'id');
+    }
+
+    public function contratos()
+    {
+        return $this->hasMany(Contrato::class, 'idEmpleado', 'id');
     }
 }

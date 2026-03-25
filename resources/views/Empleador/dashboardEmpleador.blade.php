@@ -366,7 +366,7 @@
         <div class="employer-hero">
             <h1 class="employer-title">¿Tienes algo que reparar hoy?</h1>
             <p class="employer-subtitle">Publica tu chamba en segundos y recibe ofertas de trabajadores verificados.</p>
-            <a href="{{ route('Empleador.SiTerminarEmpleador') }}" class="publish-btn">
+            <a href="{{ route('empleador.publicar') }}" class="publish-btn">
                 + Publicar Chamba Gratis
             </a>
         </div>

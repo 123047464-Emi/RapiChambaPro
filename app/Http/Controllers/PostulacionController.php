@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\Contrato;
 use App\Models\Empleado;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class PostulacionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function store(Request $request, $tareaId)
     {
         $usuario = auth()->user();
@@ -20,19 +26,27 @@ class PostulacionController extends Controller
             ], 401);
         }
 
-        // Buscar o crear perfil de empleado
+        // ✅ Validar que la tarea exista
+        if (!Tarea::find($tareaId)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La tarea no existe'
+            ], 404);
+        }
+
+        // Obtener o crear perfil de empleado
         $empleado = $usuario->empleado;
         if (!$empleado) {
             $empleado = Empleado::create([
-                'IdUsuario' => $usuario->id,
-                'Experiencia' => 'Sin especificar',
-                'NumTareas' => 0,
-                'IdHabilidades' => null
+                'idUsuario' => $usuario->id,
+                'experiencia' => 'Sin especificar',
+                'numTareas' => 0,
+                'idHabilidades' => null
             ]);
         }
 
-        // Verificar si ya existe un contrato para esta tarea
-        $existe = Contrato::where('idEmpleado', $empleado->Id)
+        // Verificar si ya existe contrato
+        $existe = Contrato::where('idEmpleado', $empleado->id)
             ->where('idTarea', $tareaId)
             ->first();
 
@@ -45,12 +59,12 @@ class PostulacionController extends Controller
 
         try {
             $contrato = Contrato::create([
-                'FechaInicio' => Carbon::now(),
-                'FechaFin' => null,              // o calcula según tu lógica
-                'idEstatus' => 1,                // pendiente
+                'FechaInicio' => now(),
+                'FechaFin' => null,
+                'idEstatus' => 1,
                 'idTarea' => $tareaId,
-                'idEmpleado' => $empleado->Id,
-                'idTipo' => 1                     // tipo de contrato predeterminado
+                'idEmpleado' => $empleado->id,
+                'idTipo' => 1
             ]);
 
             return response()->json([
@@ -62,9 +76,10 @@ class PostulacionController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'message' => 'Ocurrió un error al registrar la postulación',
+                'error' => $e->getMessage()
             ], 500);
         }
     }
+
 }

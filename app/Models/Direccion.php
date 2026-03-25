@@ -6,18 +6,35 @@ use Illuminate\Database\Eloquent\Model;
 
 class Direccion extends Model
 {
-    //
-    protected $table = 'direcciones';
+    // Nombre de la tabla en la BD
+    protected $table = 'direcciones'; // 👈 cámbialo si tu tabla se llama distinto
 
+    // Campos que se pueden asignar masivamente
     protected $fillable = [
-        'nombre', 
-        'numero_interior',
-        'numero_exterior', 
-        'idCalle'
+        'idCalle',
+        'idColonia',
+        'idMunicipio',
+        'idEstado',
     ];
 
-    //Una dirección pertenece a una calle
-    public function calles(){
-        return $this->belongsTo(Calles::class, 'idCalle', 'id');
+    // Relaciones opcionales
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'idEstado');
+    }
+
+    public function municipio()
+    {
+        return $this->belongsTo(Municipio::class, 'idMunicipio');
+    }
+
+    public function colonia()
+    {
+        return $this->belongsTo(Colonia::class, 'idColonia');
+    }
+
+    public function calle()
+    {
+        return $this->belongsTo(Calle::class, 'idCalle');
     }
 }
