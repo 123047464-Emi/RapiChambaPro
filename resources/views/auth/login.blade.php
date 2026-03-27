@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear cuenta - RAPICHAMBA</title>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -347,10 +348,7 @@
             </button>
         </form>
         <button type="button" id="btn-biometrico" class="btn-google" style="margin-top: 10px; background: #1D40AE; color: white;">
-            <svg style="width:20px; height:20px;" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M9,11H15V8H9V11M13,17H11V15H13V17M11,3H13V5H11V3M13,21H11V19H13V21M17,11H19V13H17V11M5,11H7V13H5V11M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20Z" />
-            </svg>
-            Ingresar con Rostro
+            <span id="txt-boton">Ingresar con Rostro</span>
         </button>
 
         <div id="camera-container" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; justify-content:center; align-items:center; flex-direction:column;">
@@ -386,69 +384,95 @@
         </div>
 
     </div>
-    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 
     <script>
-    const video = document.getElementById('video');
-    const btnBio = document.getElementById('btn-biometrico');
-    const container = document.getElementById('camera-container');
+        const video = document.getElementById('video');
+        const btnBio = document.getElementById('btn-biometrico');
+        const txtBoton = document.getElementById('txt-boton');
+        const container = document.getElementById('camera-container');
+        let modelosCargados = false;
 
-    // 1. Cargar modelos al abrir la página
-    Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-        faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-        faceapi.nets.faceRecognitionNet.loadFromUri('/models')
-    ]);
-
-    btnBio.addEventListener('click', async () => {
-        container.style.display = 'flex';
-        const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
-        video.srcObject = stream;
-    });
-
-    video.addEventListener('play', () => {
-        const interval = setInterval(async () => {
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptor();
-
-            if (detection) {
-                clearInterval(interval);
-                // ENVIAR AL SERVIDOR
-                enviarAlLogin(detection.descriptor);
+        // Función que carga los modelos SOLO cuando se necesitan
+        async function prepararIA() {
+            if (modelosCargados) return true;
+            
+            txtBoton.innerText = "Iniciando IA...";
+            const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+            
+            try {
+                // Cargamos solo lo estrictamente necesario
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+                
+                modelosCargados = true;
+                return true;
+            } catch (e) {
+                console.error(e);
+                alert("Error al conectar con el servidor de IA.");
+                return false;
             }
-        }, 1000);
-    });
+        }
 
-    async function enviarAlLogin(descriptor) {
-        // El descriptor es el array de números (vector)
-        const response = await fetch("{{ route('login.biometrico') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ vector: Array.from(descriptor) })
+        btnBio.addEventListener('click', async () => {
+            // 1. Intentar cargar la IA (será rápido después de la primera vez)
+            const listo = await prepararIA();
+            if (!listo) return;
+
+            // 2. Abrir cámara
+            container.style.display = 'flex';
+            txtBoton.innerText = "Ingresar con Rostro"; // Restaurar texto
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+                video.srcObject = stream;
+            } catch (err) {
+                alert("Cámara no disponible.");
+                container.style.display = 'none';
+            }
         });
 
-        const data = await response.json();
-        if (data.success) {
-            window.location.href = "/dashboard"; // O a donde quieras mandarlo
-        } else {
-            alert("Rostro no reconocido. Intenta de nuevo o usa tu contraseña.");
-            cerrarCamara();
-        }
-    }
+        video.addEventListener('play', () => {
+            const scanner = setInterval(async () => {
+                if (video.paused || video.ended) {
+                    clearInterval(scanner);
+                    return;
+                }
 
-    function cerrarCamara() {
-        container.style.display = 'none';
-        if (video.srcObject) {
-            const stream = video.srcObject;
-            const tracks = stream.getTracks();
-            tracks.forEach(track => track.stop());
-            video.srcObject = null;
+                // Detección ultra rápida
+                const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptor();
+
+                if (detection) {
+                    clearInterval(scanner);
+                    enviarAlLogin(detection.descriptor);
+                }
+            }, 500);
+        });
+
+        async function enviarAlLogin(descriptor) {
+            try {
+                const response = await fetch("{{ route('login.biometrico') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({ vector: Array.from(descriptor) })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = data.redirect; 
+                } else {
+                    alert(data.message || "Rostro no reconocido.");
+                    location.reload(); // Reiniciar para reintentar limpio
+                }
+            } catch (error) {
+                alert("Error de red.");
+            }
         }
-    }
     </script>
 </body>
 </html>

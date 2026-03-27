@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB; // IMPORTANTE: Añade esta línea
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -17,7 +17,12 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        $credentials = $request->only('correo', 'password');
+        // Laravel usa 'email' y 'password' por defecto, 
+        // pero mapeamos 'correo' según tus credenciales
+        $credentials = [
+            'correo' => $request->correo,
+            'password' => $request->password
+        ];
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
@@ -29,7 +34,7 @@ class LoginController extends Controller
         ]);
     }
 
-    // --- NUEVO: LOGIN BIOMÉTRICO ---
+    // --- LOGIN BIOMÉTRICO ---
     public function loginBiometrico(Request $request)
     {
         $vectorLogin = $request->input('vector');
@@ -38,31 +43,32 @@ class LoginController extends Controller
             return response()->json(['success' => false, 'message' => 'No se detectó rostro.'], 400);
         }
 
-        // 1. Obtener todos los vectores registrados
         $registros = DB::table('usuarios_biometrico')->get();
 
         foreach ($registros as $registro) {
             $vectorGuardado = json_decode($registro->vector);
 
-            // 2. Comparar (Distancia Euclidiana)
+            // Comparar (Distancia Euclidiana)
             $distancia = 0;
             for ($i = 0; $i < count($vectorLogin); $i++) {
                 $distancia += pow($vectorLogin[$i] - $vectorGuardado[$i], 2);
             }
             $distancia = sqrt($distancia);
 
-            // Umbral de 0.6 (estándar para face-api.js)
             if ($distancia < 0.6) {
-                // 3. Loguear al usuario
+                // Verificar que el usuario aún exista en la tabla principal
+                $usuarioExiste = DB::table('usuarios')->where('id', $registro->usuario_id)->exists();
+                
+                if (!$usuarioExiste) {
+                    continue; // Si el usuario fue borrado, seguir con el siguiente registro
+                }
+
+                // Loguear al usuario
                 Auth::loginUsingId($registro->usuario_id);
                 $request->session()->regenerate();
 
-                // 4. Obtener URL de redirección según el rol
-                $usuario = Auth::user();
-                $url = route('home');
-
-                if ($usuario->empleador) { $url = route('empleador.dashboardEmpleador'); }
-                elseif ($usuario->empleado) { $url = route('empleado.dashboardEmpleado'); }
+                // Obtener URL usando la función centralizada de roles
+                $url = $this->obtenerUrlPorRol($registro->usuario_id);
 
                 return response()->json([
                     'success' => true,
@@ -74,16 +80,29 @@ class LoginController extends Controller
         return response()->json(['success' => false, 'message' => 'Rostro no reconocido.']);
     }
 
-    // --- FUNCIÓN PRIVADA PARA EVITAR REPETIR CÓDIGO ---
+    // --- LÓGICA DE REDIRECCIÓN CENTRALIZADA ---
+
     private function redireccionarSegunRol($usuario)
     {
-        if ($usuario->empleador) {
-            return redirect()->route('empleador.dashboardEmpleador');
+        $url = $this->obtenerUrlPorRol($usuario->id);
+        return redirect()->to($url);
+    }
+
+    private function obtenerUrlPorRol($usuarioId)
+    {
+        // Consultamos directamente las tablas que me mostraste
+        $esEmpleador = DB::table('empleadores')->where('idUsuario', $usuarioId)->exists();
+        $esEmpleado = DB::table('empleados')->where('idUsuario', $usuarioId)->exists();
+
+        if ($esEmpleador) {
+            return route('empleador.dashboardEmpleador');
         }
-        if ($usuario->empleado) {
-            return redirect()->route('empleado.dashboardEmpleado');
+
+        if ($esEmpleado) {
+            return route('empleado.dashboardEmpleado');
         }
-        return redirect()->route('home');
+
+        return route('home');
     }
 
     // --- CERRAR SESIÓN ---
