@@ -566,10 +566,18 @@
 
         </div>
 
-        <div class="map-container" id="mapView">
-            🗺️ Vista de Mapa - Trabajos en Tiempo Real<br />
-            <small>(Integración con mapa interactivo)</small>
-        </div>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+        <div id="mapView" style="height: 400px;"></div>
+
+        <script>
+            var map = L.map('mapView').setView([20.5931, -100.392], 13); // Querétaro aprox
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+        </script>
 
         <div class="feed-section" id="feedView">
             @forelse($tareas as $tarea)
