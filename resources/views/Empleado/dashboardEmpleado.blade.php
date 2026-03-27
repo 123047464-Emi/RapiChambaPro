@@ -385,6 +385,133 @@
                 font-size: 0.9rem;
             }
         }
+        /* ===== Responsividad adicional ===== */
+@media (max-width: 1024px) {
+    .container {
+        padding: 1.5rem;
+    }
+
+    .nav-menu {
+        gap: 1.5rem;
+    }
+
+    .search-container {
+        flex-direction: column;
+    }
+
+    .search-input, .filter-btn {
+        width: 100%;
+    }
+
+    .view-toggle {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .view-btn {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .categories-carousel {
+        gap: 0.8rem;
+    }
+
+    .category-card {
+        min-width: 80px;
+        padding: 0.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .feed-section {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 22px;
+    }
+
+    .category-card {
+        min-width: 90px;
+        font-size: 0.85rem;
+    }
+
+    .logo-circle {
+        width: 50px;
+        height: 50px;
+    }
+
+    .brand-name {
+        font-size: 1.2rem;
+    }
+
+    .nav-menu {
+        font-size: 0.9rem;
+    }
+
+    .search-section {
+        padding: 1rem;
+    }
+
+    .apply-btn {
+        font-size: 14px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-price {
+        font-size: 1.1rem;
+    }
+
+    .card-info, .card-description, .tag {
+        font-size: 0.85rem;
+    }
+
+    .map-container {
+        padding: 1rem;
+        height: 400px;
+        font-size: 1rem;
+    }
+    }
+
+    @media (max-width: 480px) {
+        .logo-section {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-menu {
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+
+        .view-toggle {
+            flex-direction: column;
+        }
+
+        .view-btn {
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        .categories-carousel {
+            gap: 0.5rem;
+        }
+
+        .category-card {
+            min-width: 70px;
+            padding: 0.6rem;
+        }
+
+        .card-tags {
+            gap: 0.3rem;
+        }
+    }
     </style>
 </head>
 <body>

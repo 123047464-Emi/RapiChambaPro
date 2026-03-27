@@ -190,6 +190,9 @@ Route::get('/publicar-chamba', function () {
 })->name('empleador.publicar');
 
 
-Route::post('/postularse/{tarea}', [PostulacionController::class, 'store'])
+Route::post('/postularse/{tareaId}', [PostulacionController::class, 'store'])
     ->name('postularse')
     ->middleware('auth'); // Esto asegura que solo usuarios logueados puedan llamar la ruta
+
+// En routes/web.php
+Route::post('/login-biometrico', [LoginController::class, 'loginBiometrico'])->name('login.biometrico');

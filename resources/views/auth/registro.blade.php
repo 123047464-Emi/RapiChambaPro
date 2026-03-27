@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
-
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -21,9 +21,9 @@
         }
                 /* Círculos decorativos */
         .circle-decoration {
-            position: absolute;
+            position: fixed;
             border-radius: 50%;
-            z-index: 0;
+            z-index: -1;
         }
 
         .circle-top-right {
@@ -33,19 +33,21 @@
             right: -300px;
             background: transparent;
             border: 50px solid #1D40AE;
-            position: absolute;
+            position: fixed;
             border-radius: 50%;
+            z-index: -1;
         }
 
         .circle-top-right-second {
             width: 500px;
             height: 500px;
-            top: -100px;       /* muévelo hacia abajo */
-            right: -100px;    /* misma posición horizontal */
+            top: -100px;
+            right: -100px;
             background: transparent;
             border: 50px solid #1D40AE;
-            position: absolute;
+            position: fixed;
             border-radius: 50%;
+            z-index: -1;
         }
         .circle-bottom-left {
             width: 550px;
@@ -54,6 +56,8 @@
             left: -200px;
             background: transparent;
             border: 60px solid #1D40AE;
+            position: fixed;
+            z-index: -1;
         }
 
         .container {
@@ -324,6 +328,114 @@
             font-size: 12px;
             margin-top: 4px;
         }
+
+        /* =============================================
+           RESPONSIVO — agregado sin tocar lo de arriba
+           ============================================= */
+
+        /* Ocultar círculos decorativos en móvil para que no interfieran */
+        @media (max-width: 480px) {
+            .circle-top-right,
+            .circle-top-right-second,
+            .circle-bottom-left {
+                display: none;
+            }
+
+            body {
+                padding: 16px 12px;
+            }
+
+            .container {
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px 16px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .header p {
+                font-size: 14px;
+            }
+
+            .user-type-selector {
+                padding: 16px 12px;
+                gap: 12px;
+            }
+
+            .type-btn {
+                font-size: 15px;
+                padding: 14px 10px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .habilidades-container {
+                flex-direction: column;
+            }
+
+            .btn-add-skill {
+                width: 100%;
+            }
+
+            /* Video/cámara: no se desborda en pantallas pequeñas */
+            #video,
+            #previewFoto {
+                width: 100%;
+                height: auto;
+                max-width: 100%;
+            }
+
+            #canvas {
+                width: 100%;
+                height: auto;
+            }
+
+            .btn-submit {
+                font-size: 16px;
+                padding: 14px;
+            }
+        }
+
+        /* Tablet intermedia */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .circle-top-right,
+            .circle-top-right-second,
+            .circle-bottom-left {
+                display: none;
+            }
+
+            body {
+                padding: 24px 16px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            #video,
+            #previewFoto {
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+            }
+        }
+
+        /* Asegurar que el container no se desborde en cualquier tamaño */
+        .container {
+            width: 100%;
+        }
+
+        /* Inputs, selects y textareas no se desbordan */
+        input, select, textarea {
+            max-width: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -440,15 +552,16 @@
             </div>
 
             <!-- Fotografía -->
-            <div class="section-title">📷 Fotografía</div>
-            <div class="form-group full-width">
-                <div class="file-input-wrapper">
-                    <input type="file" id="fotografia" name="fotografia" accept="image/*" onchange="updateFileName(this)">
-                    <label for="fotografia" class="file-input-label">📁 Seleccionar Fotografía</label>
-                </div>
-                <div id="fileName" class="file-name">No se ha seleccionado ningún archivo</div>
-                @error('fotografia')<span class="error-text">{{ $message }}</span>@enderror
-            </div>
+            <video id="video" width="400" height="300" autoplay></video>
+
+            <canvas id="canvas" width="400" height="300" style="display:none;"></canvas>
+
+            <img id="previewFoto" style="display:none; border-radius:15px; width:400px;">
+
+            <button type="button" id="tomarFoto">📸 Capturar foto</button>
+
+            <input type="hidden" name="vector_facial" id="vectorInput">
+            <input type="hidden" name="foto_base64" id="fotoInput">
 
             <!-- SECCIÓN EMPLEADO -->
             <div id="empleadoSection" class="form-section active">
@@ -490,6 +603,90 @@
             <button type="submit" class="btn-submit">Registrarse</button>
         </form>
     </div>
+    <script>
+        let stream;
+
+        // Función principal optimizada
+        async function startCamera() {
+            try {
+                const video = document.getElementById('video');
+                
+                // 1. Iniciamos la cámara de inmediato para que no se vea negro
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+
+                // 2. Cargamos los "cerebros" desde un servidor externo (GitHub oficial)
+                // Así NO tienes que descargar nada a tu carpeta local
+                const MODEL_URL = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
+                
+                console.log("Cargando IA desde la nube...");
+                await Promise.all([
+                    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+                    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+                ]);
+                
+                console.log("IA Lista para reconocer rostros");
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Hubo un problema: " + error.message);
+            }
+        }
+
+        // Llamar a la función cuando la página esté lista
+        window.addEventListener('load', startCamera);
+
+        // IMPORTANTE: Solo ejecutar cuando toda la página ya cargó
+        window.addEventListener('load', () => {
+            startCamera();
+        });
+
+        document.getElementById('tomarFoto').addEventListener('click', async () => {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const preview = document.getElementById('previewFoto');
+            const btn = document.getElementById('tomarFoto');
+
+            btn.innerText = "Analizando rostro...";
+            btn.disabled = true;
+
+            // Detectar rostro y crear descriptor (el vector para el login)
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions())
+                .withFaceLandmarks()
+                .withFaceDescriptor();
+
+            if (!detection) {
+                alert("No veo tu cara. Acércate más y asegúrate de tener luz.");
+                btn.innerText = "📸 Capturar foto";
+                btn.disabled = false;
+                return;
+            }
+
+            // Dibujar y mostrar foto
+            const ctx = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            const fotoBase64 = canvas.toDataURL('image/png');
+
+            // GUARDAR DATOS CLAVE
+            document.getElementById('fotoInput').value = fotoBase64;
+            // Esto es lo que usará el Login para reconocerte:
+            document.getElementById('vectorInput').value = JSON.stringify(Array.from(detection.descriptor));
+
+            preview.src = fotoBase64;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+
+            btn.innerText = "✅ Identidad Facial Lista";
+        });
+    </script>
 </div>
     <script src="{{ asset('js/registro.js') }}"></script>
 </body>

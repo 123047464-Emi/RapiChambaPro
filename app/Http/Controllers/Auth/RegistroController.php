@@ -18,12 +18,11 @@ use App\Models\Habilidad;
 use App\Models\HabilidadesEmpleado;
 use Illuminate\Support\Facades\Auth;
 
-
 class RegistroController extends Controller
 {
     public function registrar(Request $request)
     {
-        // Reglas comune
+        // Reglas comunes
         $rules = [
             'nombre' => 'required|string|max:255',
             'apellido_paterno' => 'required|string|max:255',
@@ -38,7 +37,7 @@ class RegistroController extends Controller
             'calle' => 'required|string',
             'numero_exterior' => 'required|string',
             'numero_interior' => 'nullable|string',
-            'fotografia' => 'nullable|image|max:2048',
+            'fotografia' => 'nullable|string', // ya no limitamos el tamaño, es texto base64 
             'tipo_usuario' => 'required|in:empleado,empleador',
         ];
 
@@ -60,23 +59,9 @@ class RegistroController extends Controller
         try {
             // --- DIRECCIÓN ---
             $estado = Estado::firstOrCreate(['nombre' => $validated['estado']]);
-
-            $municipio = Municipio::firstOrCreate([
-                'nombre' => $validated['municipio'],
-                'idEstado' => $estado->id
-            ]);
-
-            $colonia = Colonia::firstOrCreate([
-                'nombre' => $validated['colonia'],
-                'idMunicipio' => $municipio->id,
-                'CodigoPostal' => $validated['codigo_postal']
-            ]);
-
-            $calle = Calle::firstOrCreate([
-                'nombre' => $validated['calle'],
-                'idColonia' => $colonia->id
-            ]);
-
+            $municipio = Municipio::firstOrCreate(['nombre' => $validated['municipio'], 'idEstado' => $estado->id]);
+            $colonia = Colonia::firstOrCreate(['nombre' => $validated['colonia'], 'idMunicipio' => $municipio->id, 'CodigoPostal' => $validated['codigo_postal']]);
+            $calle = Calle::firstOrCreate(['nombre' => $validated['calle'], 'idColonia' => $colonia->id]);
             $direccion = Direccion::create([
                 'nombre' => $validated['calle'],
                 'idCalle' => $calle->id,
@@ -97,30 +82,70 @@ class RegistroController extends Controller
             $usuario->idUbicacion = $direccion->id;
 
             if ($request->hasFile('fotografia')) {
+                // Guardar foto
                 $path = $request->file('fotografia')->store('public/fotografias');
                 $usuario->fotografia = basename($path);
             }
 
             $usuario->save();
 
-            // --- EMPLEADO ---
+            // ----------------------
+            // --- FACE ID BIOMÉTRICO ---
+
+            $usuario->save();
+
+            // --- FACE ID BIOMÉTRICO ---
+            // Asegúrate de que los nombres coincidan con tu base de datos
+            if ($request->filled('vectorInput') || $request->filled('vector_facial')) {
+                
+                // Usamos el nombre que viene del ID del input en tu HTML
+                $vectorData = $request->input('vector_facial');
+                $fotoData = $request->input('foto_base64');
+
+                DB::table('usuarios_biometrico')->insert([
+                    'usuario_id' => $usuario->id, // Verifica si es 'usuario_id' o 'idusuario_id'
+                    'vector'     => $vectorData,   // Ya viene como string JSON desde JS
+                    'foto'       => $fotoData,     // La imagen en base64
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+            // EMPLEADO --
             if ($validated['tipo_usuario'] === 'empleado') {
                 $empleado = new Empleado();
                 $empleado->idUsuario = $usuario->id;
-                $empleado->experiencia = $validated['experiencia'];
+                $empleado->experiencia = $validated['experiencia'] ?? 'Sin experiencia';
                 $empleado->numTareas = 0;
                 $empleado->save();
 
+                // Manejo de Habilidades (Tabla: habilidades_empleados)
                 if (!empty($validated['habilidades'])) {
-                    $habilidadesArray = json_decode($validated['habilidades'], true);
-                    foreach ($habilidadesArray as $nombreHabilidad) {
-                        $habilidad = Habilidad::firstOrCreate(['nombre' => $nombreHabilidad]);
-                        HabilidadesEmpleado::create([
-                            'idempleado' => $empleado->id,
-                            'idhabilidad' => $habilidad->id
-                        ]);
+                    // Si las habilidades vienen como "1,2,3" o "[1,2,3]"
+                    $habilidadesArray = is_array($validated['habilidades']) 
+                        ? $validated['habilidades'] 
+                        : json_decode($validated['habilidades'], true);
+
+                    if ($habilidadesArray) {
+                        foreach ($habilidadesArray as $idHab) {
+                            DB::table('habilidades_empleados')->insert([
+                                'idEmpleado'  => $empleado->id,
+                                'idHabilidad' => $idHab,
+                                'created_at'  => now(),
+                                'updated_at'  => now(),
+                            ]);
+                        }
                     }
                 }
+            }
+
+            // --- EMPLEADOR (YA LO TENÍAS, SOLO ASEGÚRATE QUE ESTÉ ASÍ) ---
+            if ($validated['tipo_usuario'] === 'empleador') {
+                $empleador = new Empleador();
+                $empleador->idUsuario = $usuario->id;
+                $empleador->nombre = $validated['nombre_empresa'];
+                $empleador->descripcion = $validated['descripcion'];
+                $empleador->numTareas = 0;
+                $empleador->save();
             }
 
             // --- EMPLEADOR ---
@@ -144,8 +169,9 @@ class RegistroController extends Controller
 
             if ($validated['tipo_usuario'] === 'empleador') {
                 return redirect()->route('empleador.dashboardEmpleador')
-                    ->with('success', '¡Bienvenido a RapiChamba'. $validated['nombre'] . '!');
+                    ->with('success', '¡Bienvenido a RapiChamba,'. $validated['nombre'] . '!');
             }
+
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);

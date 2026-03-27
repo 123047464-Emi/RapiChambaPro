@@ -1,7 +1,6 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-
 class Empleado extends Model
 {
     protected $table = 'empleados';
@@ -16,7 +15,7 @@ class Empleado extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'idUsuario', 'id');
+        return $this->belongsTo(Usuario::class, 'idUsuario', 'id');
     }
 
     public function contratos()
