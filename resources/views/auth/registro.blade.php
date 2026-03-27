@@ -449,17 +449,13 @@
         <h1>Registro de Usuario</h1>
         <p>Completa tus datos para crear tu cuenta</p>
     </div>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
 
     @if($errors->any())
-        <div class="alert alert-danger">
+        <div style="background:#ffe6e6; color:#b30000; padding:15px; border-radius:8px; margin:20px;">
+            <strong> Revisa los campos:</strong>
             <ul>
                 @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
+                    <li>• {{ $error }}</li>
                 @endforeach
             </ul>
         </div>
@@ -481,22 +477,22 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Nombre <span>*</span></label>
-                    <input type="text" name="nombre" value="{{ old('nombre') }}" >
+                    <input type="text" name="nombre" value="{{ old('nombre') }}" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$" title="Solo letras, mínimo 2 caracteres">
                     @error('nombre')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label>Apellido Paterno <span>*</span></label>
-                    <input type="text" name="apellido_paterno" value="{{ old('apellido_paterno') }}" >
+                    <input type="text" name="apellido_paterno" value="{{ old('apellido_paterno') }}" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$" title="Solo letras, mínimo 2 caracteres">
                     @error('apellido_paterno')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label>Apellido Materno <span>*</span></label>
-                    <input type="text" name="apellido_materno" value="{{ old('apellido_materno') }}">
+                    <input type="text" name="apellido_materno" value="{{ old('apellido_materno') }}" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,50}$" title="Solo letras, mínimo 2 caracteres">
                     @error('apellido_materno')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label>Teléfono <span class=>*</span></label>
-                    <input type="tel" name="telefono" value="{{ old('telefono') }}" pattern="[0-9]{10}" placeholder="10 dígitos" >
+                    <input type="tel" name="telefono" value="{{ old('telefono') }}" pattern="[0-9]{10}" maxlength="10" placeholder="10 dígitos">
                     @error('telefono')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group full-width">
@@ -506,7 +502,7 @@
                 </div>
                 <div class="form-group full-width">
                     <label>Contraseña <span >*</span></label>
-                    <input type="password" name="contrasena" minlength="8" >
+                    <input type="password" name="contrasena" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Mínimo 8 caracteres, una mayúscula y un número" minlength="8">
                     @error('contrasena')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
             </div>
@@ -686,6 +682,42 @@
 
             btn.innerText = "✅ Identidad Facial Lista";
         });
+    </script>
+    <script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+        let valid = true;
+
+        // Limpiar errores anteriores
+        document.querySelectorAll(".error-label").forEach(el => el.remove());
+        document.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+
+        const campos = [
+            {name: "nombre", msg: "El nombre solo debe tener letras"},
+            {name: "apellido_paterno", msg: "Apellido inválido"},
+            {name: "telefono", msg: "El teléfono debe tener 10 dígitos"},
+            {name: "correo", msg: "Correo inválido"},
+            {name: "contrasena", msg: "Mínimo 8 caracteres, 1 mayúscula y 1 número"}
+        ];
+
+        campos.forEach(campo => {
+            const input = document.querySelector(`[name="${campo.name}"]`);
+            
+            if (input && !input.checkValidity()) {
+                valid = false;
+                input.classList.add("input-error");
+
+                const error = document.createElement("span");
+                error.classList.add("error-label");
+                error.innerText = campo.msg;
+
+                input.parentNode.appendChild(error);
+            }
+        });
+
+        if (!valid) {
+            e.preventDefault();
+        }
+    });
     </script>
 </div>
     <script src="{{ asset('js/registro.js') }}"></script>

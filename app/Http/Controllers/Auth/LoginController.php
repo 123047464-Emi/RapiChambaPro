@@ -37,47 +37,54 @@ class LoginController extends Controller
     // --- LOGIN BIOMÉTRICO ---
     public function loginBiometrico(Request $request)
     {
-        $vectorLogin = $request->input('vector');
+        $vectorEscaneado = $request->input('vector'); // Array de 128 números
 
-        if (!$vectorLogin) {
-            return response()->json(['success' => false, 'message' => 'No se detectó rostro.'], 400);
+        if (!$vectorEscaneado || !is_array($vectorEscaneado)) {
+            return response()->json(['success' => false, 'message' => 'No se recibió el vector facial']);
         }
 
+        // 1. Obtenemos todos los vectores registrados en la DB
         $registros = DB::table('usuarios_biometrico')->get();
+
+        $usuarioIdEncontrado = null;
+        $umbralSimilitud = 0.6; // Entre más bajo, más estricto. 0.6 es el estándar de face-api.
 
         foreach ($registros as $registro) {
             $vectorGuardado = json_decode($registro->vector);
 
-            // Comparar (Distancia Euclidiana)
-            $distancia = 0;
-            for ($i = 0; $i < count($vectorLogin); $i++) {
-                $distancia += pow($vectorLogin[$i] - $vectorGuardado[$i], 2);
-            }
-            $distancia = sqrt($distancia);
+            // 2. Calculamos la Distancia Euclidiana entre los dos vectores
+            $distancia = $this->calcularDistancia($vectorEscaneado, $vectorGuardado);
 
-            if ($distancia < 0.6) {
-                // Verificar que el usuario aún exista en la tabla principal
-                $usuarioExiste = DB::table('usuarios')->where('id', $registro->usuario_id)->exists();
-                
-                if (!$usuarioExiste) {
-                    continue; // Si el usuario fue borrado, seguir con el siguiente registro
-                }
-
-                // Loguear al usuario
-                Auth::loginUsingId($registro->usuario_id);
-                $request->session()->regenerate();
-
-                // Obtener URL usando la función centralizada de roles
-                $url = $this->obtenerUrlPorRol($registro->usuario_id);
-
-                return response()->json([
-                    'success' => true,
-                    'redirect' => $url
-                ]);
+            if ($distancia < $umbralSimilitud) {
+                $usuarioIdEncontrado = $registro->usuario_id;
+                break; // ¡Encontrado!
             }
         }
 
-        return response()->json(['success' => false, 'message' => 'Rostro no reconocido.']);
+        if ($usuarioIdEncontrado) {
+            $usuario = Usuario::find($usuarioIdEncontrado);
+            Auth::login($usuario);
+
+            // 3. Determinar a dónde mandarlo
+            $esEmpleado = DB::table('empleados')->where('idUsuario', $usuario->id)->exists();
+            $redirect = $esEmpleado ? route('empleado.dashboardEmpleado') : route('empleador.dashboardEmpleador');
+
+            return response()->json([
+                'success' => true,
+                'redirect' => $redirect
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Rostro no reconocido']);
+    }
+
+    // Función matemática para comparar rostros
+    private function calcularDistancia($v1, $v2) {
+        $suma = 0;
+        for ($i = 0; $i < count($v1); $i++) {
+            $suma += pow($v1[$i] - $v2[$i], 2);
+        }
+        return sqrt($suma);
     }
 
     // --- LÓGICA DE REDIRECCIÓN CENTRALIZADA ---

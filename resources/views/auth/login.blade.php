@@ -452,25 +452,22 @@
         });
 
         async function enviarAlLogin(descriptor) {
-            try {
-                const response = await fetch("{{ route('login.biometrico') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ vector: Array.from(descriptor) })
-                });
+            const response = await fetch("{{ route('login.biometrico') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                // Enviamos el descriptor como un array normal
+                body: JSON.stringify({ vector: Array.from(descriptor) })
+            });
 
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = data.redirect; 
-                } else {
-                    alert(data.message || "Rostro no reconocido.");
-                    location.reload(); // Reiniciar para reintentar limpio
-                }
-            } catch (error) {
-                alert("Error de red.");
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = data.redirect;
+            } else {
+                alert(data.message);
+                // Opcional: reiniciar el escaneo si falló
             }
         }
     </script>
