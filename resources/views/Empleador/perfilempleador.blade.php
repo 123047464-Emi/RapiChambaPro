@@ -20,7 +20,23 @@
             overflow-x: hidden;
             position: relative;
         }
+        .nav-menu {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
 
+        .nav-menu a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #1D40AE;
+        }
         /* ── Decoraciones ── */
         .wave-top-right {
             position: fixed;
@@ -57,36 +73,68 @@
             align-items: center;
             gap: 0.85rem;
         }
+                /* Círculos decorativos */
+        .circle-decoration {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
+        }
+                .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .logo-circle {
-            width: 60px; height: 60px;
+            width: 60px;
+            height: 60px;
             background: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,.13);
-            overflow: hidden;
+            padding: 5px;
         }
+
         .logo-circle img {
-            width: 100%; height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            border-radius: 50%;
         }
+
         .brand-name {
             color: #1D40AE;
             font-size: 1.55rem;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
-        .nav-links { display: flex; gap: 2.5rem; align-items: center; }
-        .nav-links a {
-            color: #1D40AE;
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            transition: opacity .2s;
-        }
-        .nav-links a:hover { opacity: .6; }
 
         /* ── Layout principal ── */
         .main-content {
@@ -272,8 +320,9 @@
 </head>
 <body>
 
-<div class="wave-top-right"></div>
-<div class="wave-bottom-left"></div>
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 
 <!-- ── Header ── -->
 <header class="header">
@@ -283,9 +332,11 @@
             </div>
         <span class="brand-name">Empleador</span>
     </div>
-    <nav class="nav-links">
+    <nav class="nav-menu">
         <a href="{{ route('empleador.dashboardEmpleador') }}">Inicio</a>
-        <a href="{{ url('/notificaciones') }}">Notificaciones</a>
+        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Mensajes</a>
+        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Tareas Publicadas</a>
+        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Notificaciones</a>
     </nav>
 </header>
 

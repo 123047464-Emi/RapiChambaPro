@@ -196,3 +196,7 @@ Route::post('/postularse/{tareaId}', [PostulacionController::class, 'store'])
 
 // En routes/web.php
 Route::post('/login-biometrico', [LoginController::class, 'loginBiometrico'])->name('login.biometrico');
+
+//  nueva vista
+Route::get('/mis-chambas', [EmpleadoController::class, 'misChambas'])
+    ->name('empleado.misChambas');

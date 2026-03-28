@@ -63,7 +63,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 10;
-            border-bottom: 3px solid #1D40AE;
         }
         .logo-container {
             display: flex;
@@ -100,8 +99,20 @@
 
         .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 3rem;
             align-items: center;
+        }
+
+        .nav-menu a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #1D40AE;
         }
 
         .nav-link {
@@ -254,6 +265,17 @@
             border: 4px solid #f5f5f5;
             box-shadow: 0 4px 12px rgba(29, 64, 174, 0.2);
         }
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1D40AE;
+            letter-spacing: 1px;
+        }
+
+        
+        .brand-name {
+            font-size: 1.2rem;
+        }
 
         .professional-name {
             color: #333;
@@ -337,6 +359,7 @@
                 display: none;
             }
         }
+        
     </style>
 </head>
 <body>
@@ -356,7 +379,7 @@
         <nav class="nav-menu">
             <a href="{{ route('empleador.dashboardEmpleador') }}">Inicio</a>
             <a href="{{ route('empleador.perfil') }}">Perfil</a>
-            <a href="{{ route('Empleador.SiTerminarEmpleador') }} class="nav-link">Notificaciones</a>
+            <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Notificaciones</a>
         </nav>
     </header>
 

@@ -328,6 +328,112 @@
                 display: none;
             }
         }
+            .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 24px; /* cuadrado redondeado en vez de círculo */
+        background: linear-gradient(135deg, #1D40AE, #4169E1);
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 42px;
+        font-weight: bold;
+        box-shadow: 0 8px 28px rgba(29, 64, 174, 0.4);
+    }
+
+    .profile-name {
+        font-size: 30px;
+        color: #1a1a2e;
+        font-weight: 800;
+        margin-bottom: 10px;
+    }
+
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: #EEF2FF;
+        border: 1.5px solid #c7d2fe;
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #1D40AE;
+        margin-bottom: 14px;
+    }
+
+    .verified-badge::before {
+        content: '';
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #1D40AE;
+        animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50%       { opacity: 0.3; }
+    }
+
+    .rating {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        justify-content: center;
+        margin-bottom: 4px;
+    }
+
+    .rating .star     { color: #FFD700; font-size: 22px; }
+    .rating .star.empty { color: #dde3ff; font-size: 22px; }
+
+    .rating-text {
+        color: #888;
+        font-size: 14px;
+        margin-bottom: 28px;
+    }
+
+    .stats-container {
+        display: flex;
+        justify-content: center;
+        gap: 0;
+        border-top: 1.5px solid #eef2ff;
+        padding-top: 24px;
+        margin-top: 4px;
+    }
+
+    .stat-item {
+        flex: 1;
+        text-align: center;
+        padding: 0 20px;
+        border-right: 1.5px solid #eef2ff;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-icon {
+        font-size: 22px;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    .stat-number {
+        font-size: 28px;
+        font-weight: 800;
+        color: #1D40AE;
+        display: block;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        color: #999;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
     </style>
 </head>
 <body>
@@ -344,7 +450,7 @@
         </div>
         <nav class="nav-menu">
             <a href="{{ route('empleado.dashboardEmpleado') }}">Inicio</a>
-            <a href="{{ route('Empleado.SinTerminarEmpleado') }}">Mis Chambas</a>
+            <a href="{{ route('empleado.misChambas') }}" class="active">Mis Chambas</a>
             <a href="{{ route('Empleado.SinTerminarEmpleado') }}">Mensajes</a>
             <a href="{{ route('Empleado.SinTerminarEmpleado') }}">Notificaciones</a>
         </nav>
