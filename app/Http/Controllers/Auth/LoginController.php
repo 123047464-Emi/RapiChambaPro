@@ -30,7 +30,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'correo' => 'Las credenciales no son correctas.',
+            'correo' => 'El usuario o la contraseña son incorrectos.',
         ]);
     }
 
