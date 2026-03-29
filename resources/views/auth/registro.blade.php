@@ -473,7 +473,7 @@
             <input type="hidden" name="habilidades" id="habilidadesHidden">
 
             <!-- Datos Personales -->
-            <div class="section-title">📋 Datos Personales</div>
+            <div class="section-title"> Datos Personales</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Nombre <span>*</span></label>
@@ -508,7 +508,7 @@
             </div>
 
             <!-- Dirección -->
-            <div class="section-title">📍 Dirección</div>
+            <div class="section-title"> Dirección</div>
             <div class="form-grid">
                 <div class="form-group">
                     <label>Código Postal <span>*</span></label>
@@ -517,24 +517,33 @@
                 </div>
                 <div class="form-group">
                     <label>Estado <span>*</span></label>
-                    <input type="text" name="estado" value="{{ old('estado') }}">
-                    @error('estado')<span class="error-text">{{ $message }}</span>@enderror
+                    <select name="estado">
+                        @foreach($estados as $estado)
+                            <option value="{{ $estado->id }}" {{ old('estado') == $estado->id ? 'selected' : '' }}>
+                                {{ $estado->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Municipio <span>*</span></label>
-                    <input type="text" name="municipio" value="{{ old('municipio') }}" >
-                    @error('municipio')<span class="error-text">{{ $message }}</span>@enderror
+                        <select id="municipio" name="municipio">
+                            <option value="">Seleccione un municipio</option>
+                        </select>
                 </div>
                 <div class="form-group">
-                    <label>Colonia <span >*</span></label>
-                    <input type="text" name="colonia" value="{{ old('colonia') }}" >
-                    @error('colonia')<span class="error-text">{{ $message }}</span>@enderror
+                    <label>Colonia <span>*</span></label>
+                    <select id="colonia" name="colonia">
+                        <option value="">Seleccione una colonia</option>
+                    </select>
                 </div>
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label>Calle <span>*</span></label>
-                    <input type="text" name="calle" value="{{ old('calle') }}" >
-                    @error('calle')<span class="error-text">{{ $message }}</span>@enderror
+                    <select id="calle" name="calle">
+                        <option value="">Seleccione una calle</option>
+                    </select>
                 </div>
+
                 <div class="form-group">
                     <label>Número Exterior <span >*</span></label>
                     <input type="text" name="numero_exterior" value="{{ old('numero_exterior') }}">
@@ -561,7 +570,7 @@
 
             <!-- SECCIÓN EMPLEADO -->
             <div id="empleadoSection" class="form-section active">
-                <div class="section-title">💼 Información Profesional (Empleado)</div>
+                <div class="section-title">Información Profesional (Empleado)</div>
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label>Experiencia <span>*</span></label>
@@ -569,19 +578,28 @@
                         @error('experiencia')<span class="error-text">{{ $message }}</span>@enderror
                     </div>
                     <div class="form-group full-width">
-                        <label>Habilidades <span>*</span></label>
-                        <div class="habilidades-container">
-                            <input type="text" id="habilidadInput" placeholder="Escribe una habilidad">
-                            <button type="button" class="btn-add-skill" onclick="addSkill()">+ Agregar</button>
-                        </div>
-                        <div id="skillsList" class="skills-list"></div>
+                    <label>Habilidades <span>*</span></label>
+                    <div class="habilidades-container">
+                        <select id="habilidadSelect" class="form-input">
+                        <option value="">Seleccione una habilidad</option>
+                        @foreach($habilidades as $habilidad)
+                            <option value="{{ $habilidad->id }}">{{ $habilidad->nombre }}</option>
+                        @endforeach
+                        </select>
+                        <button type="button" id="addHabilidadBtn" class="btn-add-skill">Agregar</button>
                     </div>
+
+                    <!-- Aquí se van mostrando las habilidades agregadas -->
+                    <div id="habilidadesList" class="skills-list"></div>
+                    </div>
+
                 </div>
+
             </div>
 
             <!-- SECCIÓN EMPLEADOR -->
             <div id="empleadorSection" class="form-section">
-                <div class="section-title">🏢 Información de la Empresa (Empleador)</div>
+                <div class="section-title"> Información de la Empresa (Empleador)</div>
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label>Nombre de la Empresa</label>
@@ -654,7 +672,7 @@
 
             if (!detection) {
                 alert("No veo tu cara. Acércate más y asegúrate de tener luz.");
-                btn.innerText = "📸 Capturar foto";
+                btn.innerText = "Tomar foto";
                 btn.disabled = false;
                 return;
             }
@@ -680,7 +698,7 @@
                 stream.getTracks().forEach(track => track.stop());
             }
 
-            btn.innerText = "✅ Identidad Facial Lista";
+            btn.innerText = " Identidad Facial Lista";
         });
     </script>
     <script>
@@ -719,6 +737,47 @@
         }
     });
     </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('habilidadSelect');
+        const addBtn = document.getElementById('addHabilidadBtn');
+        const list = document.getElementById('habilidadesList');
+
+        addBtn.addEventListener('click', function() {
+            const habilidadId = select.value;
+            const habilidadText = select.options[select.selectedIndex].text;
+
+            if (habilidadId) {
+                // Crear chip visual
+                const chip = document.createElement('div');
+                chip.classList.add('chip');
+                chip.textContent = habilidadText;
+
+                // Input hidden para enviar al backend
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'habilidades[]';
+                hidden.value = habilidadId;
+                chip.appendChild(hidden);
+
+                // Botón para eliminar
+                const removeBtn = document.createElement('span');
+                removeBtn.textContent = '✕';
+                removeBtn.classList.add('remove-chip');
+                removeBtn.onclick = () => chip.remove();
+                chip.appendChild(removeBtn);
+
+                list.appendChild(chip);
+
+                // Resetear el select para poder elegir otra
+                select.selectedIndex = 0;
+            } else {
+                alert('Selecciona una habilidad primero');
+            }
+        });
+    });
+    </script>
+
 </div>
     <script src="{{ asset('js/registro.js') }}"></script>
 </body>

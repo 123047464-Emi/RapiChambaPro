@@ -18,34 +18,45 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Decorative circles */
+        /* Círculos decorativos */
         .circle-decoration {
             position: fixed;
             border-radius: 50%;
-            background: transparent;
-            border: 120px solid #1D40AE;
             z-index: 0;
         }
 
-        .circle-1 {
-            width: 800px;
-            height: 800px;
-            top: -400px;
-            right: -400px;
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
         }
 
-        .circle-2 {
-            width: 700px;
-            height: 700px;
-            bottom: -350px;
-            left: -350px;
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
         }
 
         /* Header */
@@ -328,7 +339,7 @@
                 display: none;
             }
         }
-            .profile-avatar {
+        .profile-avatar {
         width: 120px;
         height: 120px;
         border-radius: 24px; /* cuadrado redondeado en vez de círculo */
@@ -437,8 +448,10 @@
     </style>
 </head>
 <body>
-    <div class="circle-decoration circle-1"></div>
-    <div class="circle-decoration circle-2"></div>
+    <!-- Círculos decorativos -->
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 
     <!-- Header -->
     <header class="header">

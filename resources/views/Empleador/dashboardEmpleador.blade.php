@@ -64,37 +64,33 @@
             position: relative;
             z-index: 10;
         }
-        .logo-container {
+        .logo-section {
             display: flex;
             align-items: center;
-            gap: 10px; /* también puedes reducir el espacio entre logo y texto */
+            gap: 1rem;
         }
 
-        .logo-placeholder {
-            width: 30px;   /* antes 50px */
-            height: 30px;  /* antes 50px */
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: white;
             border-radius: 50%;
-            background: #f5f5f5;
-            border: 2px dashed #ddd;
-            font-size: 8px; /* más pequeño para el texto dentro */
-            color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
+            padding: 5px;
         }
 
-        .logo-img {
-            width: 60px;   /* ajusta según lo que quieras */
-            height: 60px;
-            object-fit: contain; /* mantiene proporción */
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
+
         
-        .logo-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1D40AE;
-            text-transform: uppercase;
+        .logo-circle {
+            width: 70px;
+            height: 70px;
         }
 
         .nav-menu {
@@ -265,16 +261,12 @@
             border: 4px solid #f5f5f5;
             box-shadow: 0 4px 12px rgba(29, 64, 174, 0.2);
         }
+
         .brand-name {
             font-size: 1.5rem;
             font-weight: bold;
             color: #1D40AE;
             letter-spacing: 1px;
-        }
-
-        
-        .brand-name {
-            font-size: 1.2rem;
         }
 
         .professional-name {
@@ -370,11 +362,11 @@
 
     <!-- Header -->
     <header class="header">
-        <div class="logo-container">
-            <div class="logo-circle">
-                <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
-            </div>
-            <div class="brand-name">RAPICHAMBA</div>
+        <div class="logo-section">
+                <div class="logo-circle">
+                    <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+                </div>
+            <span class="brand-name">Empleador</span>
         </div>
         <nav class="nav-menu">
             <a href="{{ route('empleador.dashboardEmpleador') }}">Inicio</a>
@@ -438,7 +430,8 @@
                             ⭐ {{ number_format(rand(4,5) + (rand(0,9)/10), 1) }} ({{ $empleado->numTareas }} Reseñas)
                         </div>
 
-                        <button class="professional-btn">Ver Perfil</button>
+                        <a  href="{{ route('Empleador.SiTerminarEmpleador') }}" class="professional-btn"> Ver Perfil</a>
+                        
                     </div>
                 @endforeach
             </div>

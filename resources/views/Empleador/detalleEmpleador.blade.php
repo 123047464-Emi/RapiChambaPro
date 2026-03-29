@@ -19,6 +19,13 @@
             overflow-x: hidden;
         }
 
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1D40AE;
+            letter-spacing: 1px;
+        }
+
         /* Círculos decorativos */
         .circle-decoration {
             position: fixed;

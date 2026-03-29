@@ -43,4 +43,17 @@ class Tareas extends Model
     {
         return $this->belongsTo(Empleador::class, 'idEmpleador', 'id');
     }
+
+    // 🔹 Relación: Tarea → Contratos
+    public function contratos()
+    {
+        return $this->hasMany(Contrato::class, 'idTarea');
+    }
+
+    // 🔹 Método para eliminado lógico
+    public function cancelar()
+    {
+        $this->idEstatus = 0; // 0 = Cancelada
+        $this->save();
+    }
 }

@@ -38,6 +38,7 @@ class Usuario extends Authenticatable
     {
         return 'id'; // 👈 el identificador real en la BD
     }
+    
     // Relaciones
     public function direccion()
     {
@@ -58,8 +59,5 @@ class Usuario extends Authenticatable
     {
         return $this->hasOne(Empleador::class, 'idUsuario', 'id');
     }
-
-
-
 
 }

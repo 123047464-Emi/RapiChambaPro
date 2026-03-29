@@ -14,7 +14,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #eef0f7;
             min-height: 100vh;
             overflow-x: hidden;
@@ -106,7 +106,8 @@
             background: transparent;
             border: 60px solid #1D40AE;
         }
-                .logo-section {
+
+        .logo-section {
             display: flex;
             align-items: center;
             gap: 1rem;
@@ -129,11 +130,16 @@
             object-fit: contain;
         }
 
+            
+        .logo-circle {
+                width: 70px;
+                height: 70px;
+        }
         .brand-name {
+            font-size: 1.5rem;
+            font-weight: bold;
             color: #1D40AE;
-            font-size: 1.55rem;
-            font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: 1px;
         }
 
         /* ── Layout principal ── */
@@ -335,7 +341,7 @@
     <nav class="nav-menu">
         <a href="{{ route('empleador.dashboardEmpleador') }}">Inicio</a>
         <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Mensajes</a>
-        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Tareas Publicadas</a>
+        <a href="{{ route('empleador.tareasPublicadas') }}">Tareas Publicadas</a>
         <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Notificaciones</a>
     </nav>
 </header>

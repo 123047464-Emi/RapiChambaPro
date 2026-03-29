@@ -10,6 +10,8 @@ use App\Models\Municipio;
 use App\Models\Colonia;
 use App\Models\Calle;
 use App\Models\Tareas;
+use App\Models\Categorias;
+use App\Models\Contrato;
 
 class TareaController extends Controller
 {
@@ -20,8 +22,9 @@ class TareaController extends Controller
         $municipios = Municipio::all();
         $colonias = Colonia::all();
         $calles = Calle::all();
+        $categorias = Categorias::all();
 
-        return view('Empleador.crearTarea', compact('estados', 'municipios', 'colonias', 'calles'));
+        return view('Empleador.crearTarea', compact('estados', 'municipios', 'colonias', 'calles', 'categorias'));
     }
 
     // Guardar en BD
@@ -47,7 +50,15 @@ class TareaController extends Controller
         // Buscar el empleador vinculado al usuario autenticado
         $empleador = Auth::user()->empleador;
         
+        //  Validar si ya tiene una tarea activa
+        $tareaActiva = Tareas::where('idEmpleador', $empleador->id)
+            ->where('idEstatus', 1) // 1 = activa (ajusta si usas otro valor)
+            ->exists();
 
+        if ($tareaActiva) {
+            //return redirect()->route('planes.index') // crea esta ruta si no existe
+            //    ->with('error', 'Ya tienes una tarea publicada. Contrata un plan para publicar más.');
+        }
         if (!$empleador) {
             return redirect()->back()->withErrors('El usuario autenticado no tiene un empleador asociado.');
         }
@@ -62,11 +73,46 @@ class TareaController extends Controller
             'idUbicacion' => $direccion->id,
             'idCategoria' => 1,
             'idEstatus' => 1,
-            'idEmpleador' => $empleador->id, // 👈 aquí va el id de la tabla empleadores
+            'idEmpleador' => $empleador->id, 
         ]);
 
         return redirect()->route('empleador.dashboardEmpleador')
                         ->with('success', 'La tarea ha sido publicada con éxito');
     }
+    
+    public function update(Request $request, $id)
+    {
+        $tarea = Tareas::findOrFail($id);
+
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+            'presupuesto' => 'required|numeric|min:0',
+        ]);
+
+        $tarea->nombre = $request->nombre;
+        $tarea->descripcion = $request->descripcion;
+        $tarea->presupuesto = $request->presupuesto;
+        $tarea->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    //Eliminar tarea (eliminación lógica)
+    public function destroy($id)
+    {
+        $tarea = Tareas::findOrFail($id);
+        $tarea->idEstatus = 4; // por ejemplo, 4 = Cancelada/Inactiva
+        $tarea->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function verPostulados($id)
+    {
+        $tarea = Tareas::with(['contratos.empleado.usuario'])->findOrFail($id);
+        return view('Empleador.postulados', compact('tarea'));
+    }
+
 
 }

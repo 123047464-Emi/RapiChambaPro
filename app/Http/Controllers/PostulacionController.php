@@ -7,6 +7,7 @@ use App\Models\Contrato;
 use App\Models\Empleado;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Tareas;
 
 class PostulacionController extends Controller
 {
@@ -27,7 +28,7 @@ class PostulacionController extends Controller
         }
 
         // ✅ Validar que la tarea exista
-        if (!Tarea::find($tareaId)) {
+        if (!Tareas::find($tareaId)) {
             return response()->json([
                 'success' => false,
                 'message' => 'La tarea no existe'

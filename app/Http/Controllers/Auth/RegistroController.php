@@ -160,4 +160,32 @@ class RegistroController extends Controller
             return redirect()->back()->withInput()->withErrors(['error' => 'Error en el registro: ' . $e->getMessage()]);
         }
     }
+
+        // Mostrar formulario de registro
+    public function showRegistro()
+    {
+        $estados = Estado::all();
+        $habilidades = Habilidad::all();
+        return view('auth.registro', compact('estados','habilidades'));
+    }
+
+    public function getMunicipios($idEstado)
+    {
+        $municipios = Municipio::where('idEstado', $idEstado)->get();
+        return response()->json($municipios);
+    }
+    public function getColonias($idMunicipio)
+    {
+        $colonias = Colonia::where('idMunicipio', $idMunicipio)->get();
+        return response()->json($colonias);
+    }
+
+    public function getCalles($coloniaId)
+    {
+        $calles = Calle::where('idColonia', $coloniaId)->get();
+        return response()->json($calles);
+    }
+
+
+
 }

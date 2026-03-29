@@ -13,6 +13,8 @@ use App\Http\Controllers\PostulacionController;
 use App\Http\Controllers\EmpleadorDashboardController;
 use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\TareaController;
+use App\Http\Controllers\DashboardEmpleadorController;;
+
 #Route::get('/perfilempleado', [EmpleadoController::class, 'perfil'])
     #->middleware('auth')   // Protege el guardado del empleado
     #->name('empleado.perfilEmpleado');
@@ -62,6 +64,10 @@ Route::get('/SinVista', function () {
 
 Route::post('/registro', [RegistroController::class, 'registrar'])->name('registro.registrar');
 
+Route::get('/registro', [RegistroController::class, 'showRegistro'])->name('registro');
+Route::get('/municipios/{idEstados}', [RegistroController::class, 'getMunicipios']);
+Route::get('/colonias/{municipioId}', [RegistroController::class, 'getColonias']);
+Route::get('/calles/{coloniaId}', [RegistroController::class, 'getCalles']);
 
 
 
@@ -200,3 +206,23 @@ Route::post('/login-biometrico', [LoginController::class, 'loginBiometrico'])->n
 //  nueva vista
 Route::get('/mis-chambas', [EmpleadoController::class, 'misChambas'])
     ->name('empleado.misChambas');
+
+//tareasPublicadas 
+Route::get('/dashboard-empleador', [DashboardEmpleadorController::class, 'index'])
+    ->name('empleador.dashboardEmpleador');
+
+//Route::get('/tareas-publicadas', [DashboardEmpleadorController::class, 'tareasPublicadas'])
+//  ->name('empleador.tareasPublicadas');
+
+Route::get('/Empleador.tareasPublicadas', function () {
+    return view('Empleador.tareasPublicadas');
+});
+
+Route::get('/tareas-publicadas', [DashboardEmpleadorController::class, 'tareasPublicadas'])
+    ->name('empleador.tareasPublicadas')
+    ->middleware('auth');
+
+Route::resource('tareas', TareaController::class);
+
+Route::get('/tareas/{id}/postulados', [TareaController::class, 'verPostulados'])
+    ->name('tareas.postulados');

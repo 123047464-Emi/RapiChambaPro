@@ -86,6 +86,12 @@
             object-fit: contain;
         }
 
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+        }
+
         .brand-name {
             font-size: 1.5rem;
             font-weight: bold;
@@ -297,7 +303,6 @@
             .container { padding: 1rem; }
             .header { padding: .8rem 1rem; }
             .logo-circle { width: 46px; height: 46px; }
-            .brand-name { font-size: 1.2rem; }
             .nav-menu { gap: 1.2rem; }
             .nav-menu a { font-size: .85rem; }
             .circle-top-right,
@@ -323,15 +328,15 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-section">
-            <div class="logo-circle">
-                <img src="{{ asset('img/Logo.png') }}" alt="Logo">
-            </div>
-            <div class="brand-name">RAPICHAMBA</div>
+                <div class="logo-circle">
+                    <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+                </div>
+            <span class="brand-name">Empleador</span>
         </div>
         <nav class="nav-menu">
             <a href="#">Inicio</a>
             <a href="{{ route('empleador.perfil') }}">Perfil</a>
-            <a href="#">Notificaciones</a>
+            <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Notificaciones</a>
         </nav>
     </header>
 
@@ -354,6 +359,19 @@
                     <input type="text" name="nombre" class="form-input" placeholder="Ej. Limpieza de patio trasero" required>
                 </div>
 
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select name="categoria_id" class="form-input" required>
+                        <option value="">Selecciona una categoría</option>
+
+                        @foreach($categorias as $categoria)
+                            <option value="{{ $categoria->id }}">
+                                {{ $categoria->nombre }}
+                            </option>
+                        @endforeach
+
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Descripción</label>
                     <textarea name="descripcion" class="form-textarea" placeholder="Describe con detalle qué necesitas que se haga..." required></textarea>
