@@ -98,7 +98,7 @@ class TareaController extends Controller
             'fechaPublicacion' => $request->fechaPublicacion,
             'fechaLimite' => $request->fechaLimite,
             'idUbicacion' => $direccion->id,
-            'idCategoria' => 1,
+            'idCategoria' => $request->categoria_id, // la que el usuario seleccionó
             'idEstatus' => 1,
             'idEmpleador' => $empleador->id,
         ]);
@@ -141,6 +141,13 @@ class TareaController extends Controller
         $tarea = Tareas::with(['contratos.empleado.usuario'])->findOrFail($id);
         return view('Empleador.postulados', compact('tarea'));
     }
+
+    public function index()
+    {
+        $tareas = Tareas::with('categoria')->get();
+        return view('Empleador.tareasIndex', compact('tareas'));
+    }
+
 
 
 }

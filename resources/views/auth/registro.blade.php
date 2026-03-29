@@ -570,7 +570,6 @@
                     </select>
                 </div>
 
-
                 <div class="form-group">
                     <label>Número Exterior <span >*</span></label>
                     <input type="text" name="numero_exterior" value="{{ old('numero_exterior') }}">

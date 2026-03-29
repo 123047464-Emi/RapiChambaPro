@@ -401,54 +401,57 @@
 
             <!-- Ubicación -->
             <div class="section-card">
-                <div class="section-heading">📍 Ubicación</div>
+                <div class="section-heading">📍 Dirección</div>
 
-                <div class="form-group">
-                    <label>Código Postal</label>
-                    <input type="text" id="codigo_postal" class="form-input" name="codigo_postal" placeholder="Ej. 76000" maxlength="5">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Código Postal <span>*</span></label>
+                        <input type="text" name="codigo_postal" 
+                            value="{{ old('codigo_postal') }}" 
+                            class="form-input"
+                            placeholder="5 dígitos" required>
+                        @error('codigo_postal')
+                            <span class="error-text">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado <span>*</span></label>
+                        <select id="estadoSelect" name="estado" class="form-select" required>
+                            <option value="">Seleccione un estado</option>
+                            @foreach($estados as $estado)
+                                <option value="{{ $estado->id }}" {{ old('estado') == $estado->id ? 'selected' : '' }}>
+                                    {{ $estado->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Estado</label>
-                        <select id="estado" name="estado" class="form-select">
-                            <option value="">Selecciona un estado</option>
-                            @foreach($estados as $estado)
-                                <option value="{{ $estado->id }}">{{ $estado->nombre }}</option>
-                            @endforeach
+                        <label>Municipio <span>*</span></label>
+                        <select id="municipioSelect" name="municipio" class="form-select" required>
+                            <option value="">Seleccione un municipio</option>
                         </select>
                     </div>
+
                     <div class="form-group">
-                        <label>Municipio</label>
-                        <select id="municipio" name="municipio" class="form-select">
-                            <option value="">Selecciona un estado</option>
-                            @foreach($municipios as $municipio)
-                                <option value="{{ $municipio->id }}">{{ $municipio->nombre }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Colonia</label>
-                        <select id="colonia" name="colonia" class="form-select">
-                            <option value="">Selecciona un municipio</option>
-                            @foreach($colonias as $colonia)
-                                <option value="{{ $colonia->id }}">{{ $colonia->nombre }}</option>
-                            @endforeach
+                        <label>Colonia <span>*</span></label>
+                        <select id="coloniaSelect" name="colonia" class="form-select" required>
+                            <option value="">Seleccione una colonia</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Calle</label>
-                    <select id="calle" name="calle" class="form-select">
-                        <option value="">Selecciona un municipio</option>
-                        @foreach($calles as $calle)
-                            <option value="{{ $calle->id }}">{{ $calle->nombre }}</option>
-                        @endforeach
+                    <label>Calle <span>*</span></label>
+                    <select id="calleSelect" name="calle" class="form-select" required>
+                        <option value="">Seleccione una calle</option>
                     </select>
                 </div>
-            <!-- Direccion para geocoding -->
 
+                <!-- Direccion para geocoding -->
                 <div class="form-group">
                     <label>Dirección completa </label>
                     <input type="text" name="direccion_texto" class="form-input"
@@ -517,22 +520,76 @@
         }
 
         // Ubicación dinámica por C.P. y selects
-        // ... (aquí va todo tu JS existente para CP, estado, municipio, colonias)
-    </script>
+        // ... (aquí va todo tu JS existente para CP, estado, municipio, colonias
 
-    <!-- SweetAlert de éxito -->
-    @if(session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: '{{ session('success') }}',
-                confirmButtonColor: '#1D40AE'
-            }).then(() => {
-                window.location.href = "{{ route('empleador.dashboardEmpleador') }}";
-            });
         </script>
-    @endif
+        <script>
+        function actualizarDireccion() {
+            const estado = document.getElementById('estadoSelect');
+            const municipio = document.getElementById('municipioSelect');
+            const colonia = document.getElementById('coloniaSelect');
+            const calle = document.getElementById('calleSelect');
+
+            const estadoNombre = estado.options[estado.selectedIndex]?.text || '';
+            const municipioNombre = municipio.options[municipio.selectedIndex]?.text || '';
+            const coloniaNombre = colonia.options[colonia.selectedIndex]?.text || '';
+            const calleNombre = calle.options[calle.selectedIndex]?.text || '';
+
+            const direccion = `${calleNombre}, ${coloniaNombre}, ${municipioNombre}, ${estadoNombre}`;
+            document.querySelector('input[name="direccion_texto"]').value = direccion;
+        }
+
+        document.getElementById('estadoSelect').addEventListener('change', function() {
+            let estadoId = this.value;
+            if (estadoId) {
+                fetch(`/municipios/${estadoId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let municipioSelect = document.getElementById('municipioSelect');
+                        municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                        data.forEach(m => {
+                            municipioSelect.innerHTML += `<option value="${m.id}">${m.nombre}</option>`;
+                        });
+                        actualizarDireccion();
+                    });
+            }
+        });
+
+        document.getElementById('municipioSelect').addEventListener('change', function() {
+            let municipioId = this.value;
+            if (municipioId) {
+                fetch(`/colonias/${municipioId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let coloniaSelect = document.getElementById('coloniaSelect');
+                        coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+                        data.forEach(c => {
+                            coloniaSelect.innerHTML += `<option value="${c.id}">${c.nombre}</option>`;
+                        });
+                        actualizarDireccion();
+                    });
+            }
+        });
+
+        document.getElementById('coloniaSelect').addEventListener('change', function() {
+            let coloniaId = this.value;
+            if (coloniaId) {
+                fetch(`/calles/${coloniaId}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        let calleSelect = document.getElementById('calleSelect');
+                        calleSelect.innerHTML = '<option value="">Seleccione una calle</option>';
+                        data.forEach(ca => {
+                            calleSelect.innerHTML += `<option value="${ca.id}">${ca.nombre}</option>`;
+                        });
+                        actualizarDireccion();
+                    });
+            }
+        });
+
+        document.getElementById('calleSelect').addEventListener('change', actualizarDireccion);
+        </script>
+
 
 </body>
 </html>
