@@ -17,7 +17,9 @@ class Direccion extends Model
     protected $fillable = [
         'idCalle',
         'numInterior',
-        'numExterior'
+        'numExterior', 
+        'latitud',
+        'longitud'
     ];
 
     // Relaciones opcionales

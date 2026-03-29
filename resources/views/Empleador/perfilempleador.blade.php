@@ -389,7 +389,7 @@
         </h1>
 
         <div class="verified-badge">
-            💼 Empleador Verificado
+                Empleador Verificado
         </div>
 
         <div class="rating">
@@ -453,7 +453,7 @@
 
     <!-- ── Información de la Empresa ── -->
     <div class="info-section">
-        <div class="section-header">🏢 Información de la Empresa</div>
+        <div class="section-header"> Información de la Empresa</div>
         <div class="info-grid">
             <div class="info-item">
                 <span class="info-label">Nombre de la Empresa</span>
@@ -513,7 +513,7 @@
     <!-- ── Descripción ── -->
     @if($empleador->descripcion)
     <div class="info-section">
-        <div class="section-header">⚡ Descripción</div>
+        <div class="section-header"> Descripción</div>
         <p class="description-text">{{ $empleador->descripcion }}</p>
     </div>
     @endif

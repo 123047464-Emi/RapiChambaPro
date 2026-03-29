@@ -531,7 +531,7 @@
 
         <!-- Información Personal -->
         <div class="profile-section">
-            <h2 class="section-title">📋 Información Personal</h2>
+            <h2 class="section-title"> Información Personal</h2>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">EMAIL</span>
@@ -560,7 +560,7 @@
 
         <!-- Habilidades -->
         <div class="profile-section">
-            <h2 class="section-title">🎯 Habilidades</h2>
+            <h2 class="section-title"> Habilidades</h2>
             <div class="skills-container">
                 @forelse($habilidades as $habilidad)
                     <span class="skill-tag">{{ is_string($habilidad) ? $habilidad : $habilidad->nombre }}</span>
@@ -574,9 +574,12 @@
 
         <!-- Sobre mí -->
         <div class="profile-section">
-            <h2 class="section-title">✍️ Sobre mí</h2>
-            <p class="about-text">{{ $empleado?->descripcion ?? 'Soy un profesional con más de 10 años de experiencia...' }}</p>
+            <h2 class="section-title"> Sobre mí</h2>
+            <p class="about-text">
+                {{ $empleado?->experiencia ?? 'Aún no has registrado tu experiencia laboral.' }}
+            </p>
         </div>
+
     </div>
 
     @else
