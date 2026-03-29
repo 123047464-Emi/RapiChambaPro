@@ -15,12 +15,13 @@ class Calle extends Model
     ];
 
     // Una calle pertenece a una Colonia
-    public function colonias() {
-        return $this->belongsTo(Colonias::class, 'idColonia', 'id');
+    public function colonia() {
+        return $this->belongsTo(Colonia::class, 'idColonia', 'id');
     }
 
     // // Una calle tiene muchas direcciones
     public function direcciones(){
-        return $thi->hasMany(Direcciones:: class, 'idCalle', 'id');
+    return $this->hasMany(Direccion::class, 'idCalle', 'id');
     }
+
 }

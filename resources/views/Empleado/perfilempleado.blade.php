@@ -18,6 +18,7 @@
         }
 
         body {
+
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
@@ -488,11 +489,6 @@
         $habilidades = $empleado?->habilidades ?? [];
 
         // ── Dirección ──
-        $direccion = \App\Models\Direccion::find($usuario->idUbicacion);
-        $calle = $direccion ? \App\Models\Calle::find($direccion->idCalle) : null;
-        $colonia = $calle ? \App\Models\Colonia::find($calle->idColonia) : null;
-        $municipio = $colonia ? \App\Models\Municipio::find($colonia->idMunicipio) : null;
-        $estado = $municipio ? \App\Models\Estado::find($municipio->idEstado) : null;
     @endphp
 
     <!-- Profile Container -->
@@ -548,11 +544,12 @@
                 <div class="info-item">
                     <span class="info-label">UBICACIÓN</span>
                     <span class="info-value">
-                        {{ $calle?->nombre ?? '' }},
-                        {{ $colonia?->nombre ?? '' }},
-                        {{ $municipio?->nombre ?? '' }},
-                        {{ $estado?->nombre ?? '' }}
+                        {{ $usuario->direccion?->calle?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->municipio?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->municipio?->estado?->nombre }}
                     </span>
+
                 </div>
                 <div class="info-item">
                     <span class="info-label">MIEMBRO DESDE</span>

@@ -447,6 +447,13 @@
                         @endforeach
                     </select>
                 </div>
+            <!-- Direccion para geocoding -->
+
+                <div class="form-group">
+                    <label>Dirección completa </label>
+                    <input type="text" name="direccion_texto" class="form-input"
+                        placeholder="Ej. Calle, número, colonia, ciudad">
+                </div>
             </div>
 
             <!-- Publicado por -->

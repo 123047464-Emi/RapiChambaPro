@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 use App\Models\Tareas; 
 use App\Models\Categorias;
@@ -13,7 +13,12 @@ class MostrarTareasController extends Controller
     public function dashboardEmpleado()
     {
         // Obtener tareas con relaciones
-        $tareas = Tareas::with(['ubicacion', 'categoria', 'estatus', 'empleador.usuario'])
+        $tareas = Tareas::with([
+            'ubicacion.calle.colonia.municipio.estado',
+            'categoria',
+            'estatus',
+            'empleador.usuario'
+        ])  
             ->whereHas('estatus', fn($q) => $q->where('nombre', 'Activo'))
             ->orderBy('fechaPublicacion', 'desc')
             ->get();

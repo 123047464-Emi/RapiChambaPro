@@ -360,6 +360,25 @@
             .header p {
                 font-size: 14px;
             }
+            .error-text {
+            display: none;
+            color: #b30000;
+            font-size: 0.9em;
+            }
+
+            input:invalid + .error-text {
+            display: block;
+            }
+            .error-label {
+            display: inline-block;
+            background: #ffe6e6;
+            color: #b30000;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            border-radius: 6px;
+            margin-top: 5px;
+            }
+
 
             .user-type-selector {
                 padding: 16px 12px;
@@ -450,17 +469,6 @@
         <p>Completa tus datos para crear tu cuenta</p>
     </div>
 
-    @if($errors->any())
-        <div style="background:#ffe6e6; color:#b30000; padding:15px; border-radius:8px; margin:20px;">
-            <strong> Revisa los campos:</strong>
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>• {{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <div class="user-type-selector">
         <button type="button" class="type-btn active" onclick="selectUserType('empleado', this)">👤 Empleado</button>
         <button type="button" class="type-btn" onclick="selectUserType('empleador', this)">🏢 Empleador</button>
@@ -497,13 +505,28 @@
                 </div>
                 <div class="form-group full-width">
                     <label>Correo Electrónico <span>*</span></label>
-                    <input type="email" name="correo" value="{{ old('correo') }}" >
-                    @error('correo')<span class="error-text">{{ $message }}</span>@enderror
+                    <input type="email" 
+                        name="correo" 
+                        value="{{ old('correo') }}" 
+                        required 
+                        placeholder="ejemplo@correo.com"
+                        title="Ingresa un correo válido">
+
+                    @error('correo')
+                        <span class="error-label">Este correo ya está registrado</span>
+                    @enderror
                 </div>
+
+
                 <div class="form-group full-width">
-                    <label>Contraseña <span >*</span></label>
-                    <input type="password" name="contrasena" pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" title="Mínimo 8 caracteres, una mayúscula y un número" minlength="8">
-                    @error('contrasena')<span class="error-text">{{ $message }}</span>@enderror
+                    <label>Contraseña <span>*</span></label>
+                    <input type="password" 
+                        name="contrasena" 
+                        pattern="^(?=.*[A-Z])(?=.*[0-9]).{8,}$" 
+                        title="Mínimo 8 caracteres, una mayúscula y un número" 
+                        minlength="8" 
+                        required 
+                        placeholder="Ingresa tu contraseña">
                 </div>
             </div>
 
@@ -512,12 +535,13 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label>Código Postal <span>*</span></label>
-                    <input type="text" name="codigo_postal" value="{{ old('codigo_postal') }}" placeholder="5 dígitos">
+                    <input type="text" name="codigo_postal" value="{{ old('codigo_postal') }}" placeholder="5 dígitos"  required>
                     @error('codigo_postal')<span class="error-text">{{ $message }}</span>@enderror
                 </div>
                 <div class="form-group">
                     <label>Estado <span>*</span></label>
-                    <select name="estado">
+                    <select id="estadoSelect" name="estado"  required>
+                        <option value="">Seleccione un estado</option>
                         @foreach($estados as $estado)
                             <option value="{{ $estado->id }}" {{ old('estado') == $estado->id ? 'selected' : '' }}>
                                 {{ $estado->nombre }}
@@ -525,24 +549,27 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>Municipio <span>*</span></label>
-                        <select id="municipio" name="municipio">
-                            <option value="">Seleccione un municipio</option>
-                        </select>
+                    <select id="municipioSelect" name="municipio"  required>
+                        <option value="">Seleccione un municipio</option>
+                    </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" >
                     <label>Colonia <span>*</span></label>
-                    <select id="colonia" name="colonia">
+                    <select id="coloniaSelect" name="colonia"  required>
                         <option value="">Seleccione una colonia</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label>Calle <span>*</span></label>
-                    <select id="calle" name="calle">
+                    <select id="calleSelect" name="calle"  required>
                         <option value="">Seleccione una calle</option>
                     </select>
                 </div>
+
 
                 <div class="form-group">
                     <label>Número Exterior <span >*</span></label>
@@ -574,13 +601,12 @@
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label>Experiencia <span>*</span></label>
-                        <textarea name="experiencia" >{{ old('experiencia') }}</textarea>
-                        @error('experiencia')<span class="error-text">{{ $message }}</span>@enderror
+                        <textarea name="experiencia"  required>{{ old('experiencia') }}</textarea>
                     </div>
                     <div class="form-group full-width">
                     <label>Habilidades <span>*</span></label>
                     <div class="habilidades-container">
-                        <select id="habilidadSelect" class="form-input">
+                        <select id="habilidadSelect" class="form-input" >
                         <option value="">Seleccione una habilidad</option>
                         @foreach($habilidades as $habilidad)
                             <option value="{{ $habilidad->id }}">{{ $habilidad->nombre }}</option>
@@ -777,6 +803,69 @@
         });
     });
     </script>
+
+    <script>
+    // Estado → Municipio
+    document.getElementById('estadoSelect').addEventListener('change', function() {
+        const estadoId = this.value;
+        if (!estadoId) return;
+
+        fetch(`/municipios/${estadoId}`)
+            .then(res => res.json())
+            .then(data => {
+                const municipioSelect = document.getElementById('municipioSelect');
+                municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+                data.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.nombre;
+                    municipioSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error cargando municipios:', err));
+    });
+
+    // Municipio → Colonia
+    document.getElementById('municipioSelect').addEventListener('change', function() {
+        const municipioId = this.value;
+        if (!municipioId) return;
+
+        fetch(`/colonias/${municipioId}`)
+            .then(res => res.json())
+            .then(data => {
+                const coloniaSelect = document.getElementById('coloniaSelect');
+                coloniaSelect.innerHTML = '<option value="">Seleccione una colonia</option>';
+                data.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.nombre;
+                    coloniaSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error cargando colonias:', err));
+    });
+
+    // Colonia → Calle
+    document.getElementById('coloniaSelect').addEventListener('change', function() {
+        const coloniaId = this.value;
+        if (!coloniaId) return;
+
+        fetch(`/calles/${coloniaId}`)
+            .then(res => res.json())
+            .then(data => {
+                const calleSelect = document.getElementById('calleSelect');
+                calleSelect.innerHTML = '<option value="">Seleccione una calle</option>';
+                data.forEach(calle => {
+                    const option = document.createElement('option');
+                    option.value = calle.id;
+                    option.textContent = calle.nombre;
+                    calleSelect.appendChild(option);
+                });
+            })
+            .catch(err => console.error('Error cargando calles:', err));
+    });
+    </script>
+
 
 </div>
     <script src="{{ asset('js/registro.js') }}"></script>

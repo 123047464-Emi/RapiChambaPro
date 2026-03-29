@@ -23,6 +23,63 @@
             position: relative;
             overflow: hidden;
         }
+        /* --- Breakpoints --- */
+
+        /* Tablet (pantallas medianas) */
+        @media (max-width: 1024px) {
+            .signup-container {
+                max-width: 80%;
+                padding: 30px;
+            }
+
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        /* Móviles (pantallas pequeñas) */
+        @media (max-width: 768px) {
+            .signup-container {
+                max-width: 95%;
+                padding: 25px;
+                margin: 15px;
+            }
+
+            .logo {
+                width: 120px;
+                height: 120px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .circle-decoration {
+                display: none; /* ocultar círculos decorativos en móviles */
+            }
+        }
+
+        /* Extra pequeño (teléfonos muy chicos, ~320px) */
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 20px;
+            }
+
+            .form-input {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .btn-primary, .btn-google {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
 
         /* Círculos decorativos */
         .circle-decoration {
@@ -169,6 +226,7 @@
             transition: all 0.3s;
             margin-bottom: 18px;
         }
+
 
         .btn-primary:hover {
             background: #333;

@@ -42,7 +42,7 @@ class Usuario extends Authenticatable
     // Relaciones
     public function direccion()
     {
-        return $this->belongsTo(Direccion::class, 'idDireccion', 'id');
+        return $this->belongsTo(Direccion::class, 'idUbicacion', 'id');
     }
 
     public function estatus()
