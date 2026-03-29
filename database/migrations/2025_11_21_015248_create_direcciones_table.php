@@ -14,6 +14,10 @@ return new class extends Migration
             $table->foreignId('idCalle')->constrained('calles')->cascadeOnDelete();
             $table->string('numInterior')->nullable();
             $table->string('numExterior')->nullable();
+
+            //coordenadas
+            $table->decimal('latitud', 10, 7)->nullable();
+            $table->decimal('longitud', 10, 7)->nullable();
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Direccion;
@@ -37,16 +38,42 @@ class TareaController extends Controller
             'colonia' => 'required|exists:colonias,id',
             'municipio' => 'required|exists:municipios,id',
             'estado' => 'required|exists:estados,id',
+            'direccion_texto' => 'required|string|min:10'
         ]);
 
-        // Guardar dirección
+        // Obtener modelos
+        $colonia = Colonia::find($request->colonia);
+        $municipio = Municipio::find($request->municipio);
+        $estado = Estado::find($request->estado);
+
+        // Dirección libre
+        $direccionTexto = $request->direccion_texto;
+
+        // 🔥 Geocoding principal
+        $coords = GeocodingService::obtenerCoordenadas($direccionTexto);
+
+        // 🔥 Fallback 1
+        if (!$coords) {
+            $coords = GeocodingService::obtenerCoordenadas(
+                "{$colonia->nombre}, {$municipio->nombre}, {$estado->nombre}, Mexico"
+            );
+        }
+
+        // 🔥 Fallback 2
+        if (!$coords) {
+            $coords = GeocodingService::obtenerCoordenadas(
+                "{$municipio->nombre}, {$estado->nombre}, Mexico"
+            );
+        }
+        // Guardar dirección (aunque falle, guarda null para no romper flujo)
         $direccion = Direccion::create([
             'idCalle' => $request->calle,
+            'latitud' => $coords['lat'] ?? null,
+            'longitud' => $coords['lon'] ?? null,
         ]);
 
-        // Buscar el empleador vinculado al usuario autenticado
+        // Obtener empleador
         $empleador = Auth::user()->empleador;
-        
 
         if (!$empleador) {
             return redirect()->back()->withErrors('El usuario autenticado no tiene un empleador asociado.');
@@ -62,11 +89,10 @@ class TareaController extends Controller
             'idUbicacion' => $direccion->id,
             'idCategoria' => 1,
             'idEstatus' => 1,
-            'idEmpleador' => $empleador->id, // 👈 aquí va el id de la tabla empleadores
+            'idEmpleador' => $empleador->id,
         ]);
 
         return redirect()->route('empleador.dashboardEmpleador')
                         ->with('success', 'La tarea ha sido publicada con éxito');
     }
-
 }

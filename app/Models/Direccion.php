@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Estado;
+use App\Models\Municipio;
+use App\Models\Colonia;
+use App\Models\Calle;
 
 class Direccion extends Model
 {
@@ -15,6 +19,8 @@ class Direccion extends Model
         'idColonia',
         'idMunicipio',
         'idEstado',
+        'latitud',     // 👈 IMPORTANTE
+        'longitud'     // 👈 IMPORTANTE
     ];
 
     // Relaciones opcionales

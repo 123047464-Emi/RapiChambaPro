@@ -572,11 +572,41 @@
         <div id="mapView" style="height: 400px;"></div>
 
         <script>
-            var map = L.map('mapView').setView([20.5931, -100.392], 13); // Querétaro aprox
+            const tareas = @json($tareas);
+
+            var map = L.map('mapView').setView([20.5931, -100.392], 13);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap'
             }).addTo(map);
+
+            console.log(tareas);
+
+            tareas.forEach(tarea => {
+
+                let lat = tarea.ubicacion?.latitud;
+                let lng = tarea.ubicacion?.longitud;
+
+                // 🔥 convertir a número
+                lat = parseFloat(lat);
+                lng = parseFloat(lng);
+
+                console.log("Coords:", lat, lng);
+
+                if (!isNaN(lat) && !isNaN(lng)) {
+
+                    L.marker([lat, lng])
+                        .addTo(map)
+                        .bindPopup(`
+                            <strong>${tarea.nombre}</strong><br>
+                            $${tarea.presupuesto}
+                        `);
+
+                    // 🔥 centrar mapa en el marcador
+                    map.setView([lat, lng], 15);
+                }
+
+            });
         </script>
 
         <div class="feed-section" id="feedView">
@@ -587,7 +617,10 @@
                     <div class="card-price">${{ number_format($tarea->presupuesto, 0, '.', ',') }}</div>
                 </div>
                 <div class="card-info">
-                    📍 {{ $tarea->ubicacion->colonia ?? 'Ubicación no especificada' }}, {{ $tarea->ubicacion->municipio ?? '' }}
+                    📍 {{ $tarea->ubicacion->calle->colonia->nombre ?? 'Ubicación no especificada' }},
+                    {{ $tarea->ubicacion->calle->colonia->municipio->nombre ?? '' }},
+                    {{ $tarea->ubicacion->calle->colonia->municipio->estado->nombre ?? '' }}
+
                 </div>
                 <div class="card-info">
                     ⏰ Publicado {{ $tarea->tiempo_transcurrido ?? 'hace un momento' }}

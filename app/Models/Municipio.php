@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Estado;
+use App\Models\Colonia;
 
 class Municipio extends Model
 {
@@ -15,13 +17,14 @@ class Municipio extends Model
     ];
 
     // Un municipio pertenece a un estado
-    public function estados() {
+    public function estado() {
         return $this->belongsTo(Estado::class, 'idEstado', 'id');
     }
 
     // Un municipio tiene muchas colonias
     public function colonias(){
-        return $this->hasMany(Colonias:: class, 'idMunicipio', 'id');
+    return $this->hasMany(Colonia::class, 'idMunicipio', 'id');
     }
+
 
 }
