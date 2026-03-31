@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             EstadosSeeder::class,
+            MunicipiosSeeder::class,
+            ColoniasSeeder::class,
+            CallesSeeder::class,
             CategoriasSeeder::class,
             EstatusSeeder::class,
         ]);
