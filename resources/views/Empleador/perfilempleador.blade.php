@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #eef0f7;
+            background: #f5f5f5;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
