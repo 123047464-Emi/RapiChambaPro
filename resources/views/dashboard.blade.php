@@ -63,7 +63,6 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 10;
-            border-bottom: 3px solid #1D40AE;
         }
 
         .logo-section {
@@ -97,11 +96,11 @@
         }
 
         .nav-link {
-            color: #1D40AE;
+            color: #333;
             text-decoration: none;
             font-weight: 500;
-            font-size: 16px;
-            transition: opacity 0.3s;
+            font-size: 1rem;
+            transition: color 0.3s;
         }
 
         .nav-link:hover {
@@ -760,7 +759,10 @@
             <div class="employer-hero">
                 <h1 class="employer-title">¿Tienes algo que reparar hoy?</h1>
                 <p class="employer-subtitle">Publica tu chamba en segundos y recibe ofertas de trabajadores verificados.</p>
-                <button class="publish-btn">+ Publicar Chamba Gratis</button>
+                <a href="{{ route('registro.registrar') }}" class="publish-btn">
+                    + Publicar Chamba Gratis
+                </a>
+
             </div>
 
             <div class="stats-section">
@@ -784,7 +786,7 @@
                         <div class="professional-name">Juan Pérez ✓</div>
                         <div class="professional-specialty">Plomero Experto</div>
                         <div class="professional-rating">⭐ 4.9 (123 Reseñas)</div>
-                        <button class="professional-btn">Ver Perfil</button>
+                        <a  href="{{ route('SinVista') }}" class="professional-btn"> Ver Perfil</a>
                     </div>
 
                     <div class="professional-card">
@@ -792,7 +794,7 @@
                         <div class="professional-name">María García ✓</div>
                         <div class="professional-specialty">Limpieza Profunda</div>
                         <div class="professional-rating">⭐ 5.0 (89 Reseñas)</div>
-                        <button class="professional-btn">Ver Perfil</button>
+                        <a  href="{{ route('SinVista') }}" class="professional-btn"> Ver Perfil</a>
                     </div>
 
                     <div class="professional-card">
@@ -800,7 +802,7 @@
                         <div class="professional-name">Carlos Ruiz</div>
                         <div class="professional-specialty">Electricista</div>
                         <div class="professional-rating">⭐ 4.8 (76 Reseñas)</div>
-                        <button class="professional-btn">Ver Perfil</button>
+                        <a  href="{{ route('SinVista') }}" class="professional-btn"> Ver Perfil</a>
                     </div>
                 </div>
             </div>

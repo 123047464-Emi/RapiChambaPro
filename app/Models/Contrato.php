@@ -32,13 +32,15 @@ class Contrato extends Model
     // Un contrato pertenece a una tarea
     public function tarea()
     {
-        return $this->belongsTo(TareaS::class, 'idTarea', 'id');
+        return $this->belongsTo(Tareas::class, 'idTarea', 'id');
     }
 
     // Un contrato pertenece a un tipo de contrato
-    public function Tiposcontratos()
+    public function tiposcontratos()
     {
         return $this->belongsTo(Tiposcontratos::class, 'idTipo', 'id');
     }
+
+    
 }
 

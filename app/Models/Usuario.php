@@ -38,10 +38,11 @@ class Usuario extends Authenticatable
     {
         return 'id'; // 👈 el identificador real en la BD
     }
+    
     // Relaciones
     public function direccion()
     {
-        return $this->belongsTo(Direccion::class, 'idDireccion', 'id');
+        return $this->belongsTo(Direccion::class, 'idUbicacion', 'id');
     }
 
     public function estatus()
@@ -58,8 +59,5 @@ class Usuario extends Authenticatable
     {
         return $this->hasOne(Empleador::class, 'idUsuario', 'id');
     }
-
-
-
 
 }

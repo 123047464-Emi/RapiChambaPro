@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: rapichamba_app
+    volumes:
+      - .:/var/www
+    networks:
+      - rapichamba
+
+  webserver:
+    image: nginx:alpine
+    container_name: rapichamba_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - rapichamba
+
+  db:
+    image: mysql:latest
+    container_name: rapichamba_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: rapichamba
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3308:3306"
+    networks:
+      - rapichamba
+
+networks:
+  rapichamba:

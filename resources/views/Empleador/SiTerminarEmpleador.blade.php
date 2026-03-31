@@ -83,9 +83,10 @@
         }
 
         .brand-name {
-            font-size: 24px;
+            font-size: 1.5rem;
             font-weight: bold;
             color: #1D40AE;
+            letter-spacing: 1px;
         }
 
         .nav-menu {

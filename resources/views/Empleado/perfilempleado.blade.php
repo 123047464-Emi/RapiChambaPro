@@ -18,34 +18,46 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Decorative circles */
+        /* Círculos decorativos */
         .circle-decoration {
             position: fixed;
             border-radius: 50%;
-            background: transparent;
-            border: 120px solid #1D40AE;
             z-index: 0;
         }
 
-        .circle-1 {
-            width: 800px;
-            height: 800px;
-            top: -400px;
-            right: -400px;
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
         }
 
-        .circle-2 {
-            width: 700px;
-            height: 700px;
-            bottom: -350px;
-            left: -350px;
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
         }
 
         /* Header */
@@ -328,7 +340,7 @@
                 display: none;
             }
         }
-            .profile-avatar {
+        .profile-avatar {
         width: 120px;
         height: 120px;
         border-radius: 24px; /* cuadrado redondeado en vez de círculo */
@@ -437,8 +449,10 @@
     </style>
 </head>
 <body>
-    <div class="circle-decoration circle-1"></div>
-    <div class="circle-decoration circle-2"></div>
+    <!-- Círculos decorativos -->
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 
     <!-- Header -->
     <header class="header">
@@ -475,11 +489,6 @@
         $habilidades = $empleado?->habilidades ?? [];
 
         // ── Dirección ──
-        $direccion = \App\Models\Direccion::find($usuario->idUbicacion);
-        $calle = $direccion ? \App\Models\Calle::find($direccion->idCalle) : null;
-        $colonia = $calle ? \App\Models\Colonia::find($calle->idColonia) : null;
-        $municipio = $colonia ? \App\Models\Municipio::find($colonia->idMunicipio) : null;
-        $estado = $municipio ? \App\Models\Estado::find($municipio->idEstado) : null;
     @endphp
 
     <!-- Profile Container -->
@@ -522,7 +531,7 @@
 
         <!-- Información Personal -->
         <div class="profile-section">
-            <h2 class="section-title">📋 Información Personal</h2>
+            <h2 class="section-title"> Información Personal</h2>
             <div class="info-grid">
                 <div class="info-item">
                     <span class="info-label">EMAIL</span>
@@ -535,11 +544,12 @@
                 <div class="info-item">
                     <span class="info-label">UBICACIÓN</span>
                     <span class="info-value">
-                        {{ $calle?->nombre ?? '' }},
-                        {{ $colonia?->nombre ?? '' }},
-                        {{ $municipio?->nombre ?? '' }},
-                        {{ $estado?->nombre ?? '' }}
+                        {{ $usuario->direccion?->calle?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->municipio?->nombre }},
+                        {{ $usuario->direccion?->calle?->colonia?->municipio?->estado?->nombre }}
                     </span>
+
                 </div>
                 <div class="info-item">
                     <span class="info-label">MIEMBRO DESDE</span>
@@ -550,7 +560,7 @@
 
         <!-- Habilidades -->
         <div class="profile-section">
-            <h2 class="section-title">🎯 Habilidades</h2>
+            <h2 class="section-title"> Habilidades</h2>
             <div class="skills-container">
                 @forelse($habilidades as $habilidad)
                     <span class="skill-tag">{{ is_string($habilidad) ? $habilidad : $habilidad->nombre }}</span>
@@ -564,9 +574,12 @@
 
         <!-- Sobre mí -->
         <div class="profile-section">
-            <h2 class="section-title">✍️ Sobre mí</h2>
-            <p class="about-text">{{ $empleado?->descripcion ?? 'Soy un profesional con más de 10 años de experiencia...' }}</p>
+            <h2 class="section-title"> Sobre mí</h2>
+            <p class="about-text">
+                {{ $empleado?->experiencia ?? 'Aún no has registrado tu experiencia laboral.' }}
+            </p>
         </div>
+
     </div>
 
     @else

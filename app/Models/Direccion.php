@@ -16,11 +16,10 @@ class Direccion extends Model
     // Campos que se pueden asignar masivamente
     protected $fillable = [
         'idCalle',
-        'idColonia',
-        'idMunicipio',
-        'idEstado',
-        'latitud',     // 👈 IMPORTANTE
-        'longitud'     // 👈 IMPORTANTE
+        'numInterior',
+        'numExterior', 
+        'latitud',
+        'longitud'
     ];
 
     // Relaciones opcionales

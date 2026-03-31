@@ -69,6 +69,12 @@
             gap: 1rem;
         }
 
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
         .logo-circle {
             width: 60px;
             height: 60px;
@@ -84,6 +90,12 @@
             width: 100%;
             height: 100%;
             object-fit: contain;
+        }
+
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
         }
 
         .brand-name {
@@ -523,10 +535,10 @@
     <!-- Nuevo Header -->
     <header class="header">
         <div class="logo-section">
-            <div class="logo-circle">
-                <img src="{{ asset('img/Logo.png') }}" alt="Logo">
-            </div>
-            <div class="brand-name">RAPICHAMBA</div>
+                <div class="logo-circle">
+                    <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+                </div>
+            <span class="brand-name">RAPICHAMBA</span>
         </div>
         <nav class="nav-menu">
             <a href="#">Inicio</a>

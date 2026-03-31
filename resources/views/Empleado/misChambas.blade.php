@@ -51,25 +51,75 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #f0f4ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
         }
-
-        /* ── Decorative circles (igual que perfil) ── */
+        html {
+            font-size: 18px;
+        }
+                /* Círculos decorativos */
         .circle-decoration {
             position: fixed;
             border-radius: 50%;
-            background: transparent;
-            border: 120px solid #1D40AE;
             z-index: 0;
-            opacity: 0.06;
-            pointer-events: none;
         }
-        .circle-1 { width: 800px; height: 800px; top: -400px; right: -400px; }
-        .circle-2 { width: 700px; height: 700px; bottom: -350px; left: -350px; }
+
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
+        }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+        }
 
         /* ── Header ── */
         .header {
@@ -82,9 +132,12 @@
             position: relative;
             z-index: 10;
         }
-        .logo-container { display: flex; align-items: center; gap: 10px; }
-        .logo-img { width: 60px; height: 60px; object-fit: contain; }
-        .brand-name { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: #1D40AE; }
+        .brand-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1D40AE;
+            letter-spacing: 1px;
+        }
         .nav-menu { display: flex; gap: 30px; align-items: center; }
         .nav-menu a { color: #555; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
         .nav-menu a:hover, .nav-menu a.active { color: #1D40AE; font-weight: 600; }
@@ -95,7 +148,7 @@
 
         /* ── Page title ── */
         .page-title {
-            font-family: 'Sora', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             font-size: 26px;
             font-weight: 800;
             color: #0d1f6e;
@@ -340,14 +393,18 @@
 </head>
 <body>
 
-<div class="circle-decoration circle-1"></div>
-<div class="circle-decoration circle-2"></div>
+    <!-- Círculos decorativos -->
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 
 <!-- Header -->
 <header class="header">
-    <div class="logo-container">
-        <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
-        <div class="brand-name">Empleado</div>
+    <div class="logo-section">
+            <div class="logo-circle">
+                <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+            </div>
+        <span class="brand-name">Empleado</span>
     </div>
     <nav class="nav-menu">
         <a href="{{ route('empleado.dashboardEmpleado') }}">Inicio</a>
@@ -365,27 +422,27 @@
     <!-- ── Stats Row ── -->
     <div class="stats-row">
         <div class="stat-card blue">
-            <div class="stat-icon blue">📋</div>
+            <div class="stat-icon blue"></div>
             <div class="stat-num">{{ $totalPostulaciones }}</div>
             <div class="stat-lbl">Total postulaciones</div>
         </div>
         <div class="stat-card green">
-            <div class="stat-icon green">✅</div>
+            <div class="stat-icon green"></div>
             <div class="stat-num">{{ $completados }}</div>
             <div class="stat-lbl">Completados</div>
         </div>
         <div class="stat-card amber">
-            <div class="stat-icon amber">⚡</div>
+            <div class="stat-icon amber"></div>
             <div class="stat-num">{{ $enProgreso }}</div>
             <div class="stat-lbl">En progreso</div>
         </div>
         <div class="stat-card red">
-            <div class="stat-icon red">❌</div>
+            <div class="stat-icon red"></div>
             <div class="stat-num">{{ $cancelados }}</div>
             <div class="stat-lbl">Cancelados</div>
         </div>
         <div class="stat-card teal">
-            <div class="stat-icon teal">💰</div>
+            <div class="stat-icon teal"></div>
             <div class="stat-num">${{ number_format($totalGanado, 0) }}</div>
             <div class="stat-lbl">Total ganado</div>
         </div>
@@ -460,7 +517,7 @@
         <div class="table-card">
             <div class="table-header">
                 <div class="table-title">
-                    <div class="table-title-icon">🗂️</div>
+                    <div class="table-title-icon"></div>
                     Historial de chambas
                 </div>
                 <div class="tab-filters">
@@ -496,14 +553,14 @@
                     @endphp
                     <tr data-status="{{ $statusNombre }}">
                         <td>
-                            <div class="job-name">{{ $contrato->tarea?->Nombre ?? 'Sin nombre' }}</div>
+                            <div class="job-name">{{ $contrato->tarea?->nombre ?? 'Sin nombre' }}</div>
                             <div class="job-cat">{{ $contrato->tarea?->categoria?->Nombre ?? '' }}</div>
                         </td>
-                        <td><span class="fecha">{{ \Carbon\Carbon::parse($contrato->Fecha_Inicio)->format('d/m/Y') }}</span></td>
-                        <td><span class="fecha">{{ $contrato->Fecha_Fin ? \Carbon\Carbon::parse($contrato->Fecha_Fin)->format('d/m/Y') : '—' }}</span></td>
+                        <td><span class="fecha">{{ \Carbon\Carbon::parse($contrato->FechaInicio)->format('d/m/Y') }}</span></td>
+                        <td><span class="fecha">{{ $contrato->FechaFin ? \Carbon\Carbon::parse($contrato->FechaFin)->format('d/m/Y') : '—' }}</span></td>
                         <td>
                             <span class="monto {{ $statusNombre !== 'Completado' ? 'monto-pending' : '' }}">
-                                ${{ number_format($contrato->MontoPact, 0) }}
+                                ${{ number_format($contrato->tarea?->presupuesto ?? 0, 0) }}
                             </span>
                         </td>
                         <td><span class="badge {{ $badgeClass }}">{{ $statusNombre }}</span></td>

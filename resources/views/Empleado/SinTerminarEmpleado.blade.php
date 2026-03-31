@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
             min-height: 100vh;
             position: relative;
@@ -21,27 +21,38 @@
             flex-direction: column;
         }
 
-        /* Decorative circles */
+        /* Círculos decorativos */
         .circle-decoration {
             position: fixed;
             border-radius: 50%;
-            background: transparent;
-            border: 120px solid #1D40AE;
             z-index: 0;
         }
 
-        .circle-1 {
-            width: 800px;
-            height: 800px;
-            top: -400px;
-            right: -400px;
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
         }
 
-        .circle-2 {
-            width: 700px;
-            height: 700px;
-            bottom: -350px;
-            left: -350px;
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
         }
 
         /* Header */
@@ -59,21 +70,27 @@
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px; /* también puedes reducir el espacio entre logo y texto */
         }
 
         .logo-placeholder {
-            width: 50px;
-            height: 50px;
+            width: 30px;   /* antes 50px */
+            height: 30px;  /* antes 50px */
             border-radius: 50%;
             background: #f5f5f5;
             border: 2px dashed #ddd;
-            font-size: 10px;
+            font-size: 8px; /* más pequeño para el texto dentro */
             color: #999;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+        }
+
+        .logo-img {
+            width: 60px;   /* ajusta según lo que quieras */
+            height: 60px;
+            object-fit: contain; /* mantiene proporción */
         }
 
         .brand-name {
@@ -267,14 +284,15 @@
     </style>
 </head>
 <body>
-    <!-- Decorative Circles -->
-    <div class="circle-decoration circle-1"></div>
-    <div class="circle-decoration circle-2"></div>
+    <!-- Círculos decorativos -->
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 
     <!-- Header -->
     <header class="header">
         <div class="logo-container">
-            <div class="logo-placeholder">Logo</div>
+            <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
             <div class="brand-name">RAPICHAMBA</div>
         </div>
         <nav class="nav-menu">

@@ -95,4 +95,18 @@ class EmpleadoController extends Controller
             'trabajosPorMes'
         ));
     }
+    public function perfilEmpleado()
+    {
+        $usuario = Auth::user();
+
+        if (!$usuario) {
+            return redirect()->route('login');
+        }
+
+        // Buscar el empleado ligado al usuario autenticado
+        $empleado = Empleado::where('idUsuario', $usuario->id)->first();
+
+        return view('empleado.perfil', compact('empleado'));
+    }
+
 }

@@ -31,10 +31,10 @@ class RegistroController extends Controller
             'telefono' => 'required|digits:10',
             'contrasena' => 'required|string|min:8',
             'codigo_postal' => 'required|digits:5',
-            'estado' => 'required|string',
-            'municipio' => 'required|string',
-            'colonia' => 'required|string',
-            'calle' => 'required|string',
+            'estado' => 'required|integer',
+            'municipio' => 'required|integer',
+            'colonia' => 'required|integer',
+            'calle' => 'required|integer',
             'numero_exterior' => 'required|string',
             'numero_interior' => 'nullable|string',
             'fotografia' => 'nullable|string', 
@@ -44,7 +44,8 @@ class RegistroController extends Controller
         // Reglas específicas
         if ($request->tipo_usuario === 'empleado') {
             $rules['experiencia'] = 'required|string';
-            $rules['habilidades'] = 'nullable|string'; // JSON
+            $rules['habilidades'] = 'nullable|array';
+            $rules['habilidades.*'] = 'string';
         }
 
         if ($request->tipo_usuario === 'empleador') {
@@ -58,17 +59,18 @@ class RegistroController extends Controller
 
         try {
             // --- DIRECCIÓN ---
-            $estado = Estado::firstOrCreate(['nombre' => $validated['estado']]);
-            $municipio = Municipio::firstOrCreate(['nombre' => $validated['municipio'], 'idEstado' => $estado->id]);
-            $colonia = Colonia::firstOrCreate(['nombre' => $validated['colonia'], 'idMunicipio' => $municipio->id, 'CodigoPostal' => $validated['codigo_postal']]);
-            $calle = Calle::firstOrCreate(['nombre' => $validated['calle'], 'idColonia' => $colonia->id]);
+            $estado   = Estado::findOrFail($validated['estado']);
+            $municipio = Municipio::findOrFail($validated['municipio']);
+            $colonia  = Colonia::findOrFail($validated['colonia']);
+            $calle    = Calle::findOrFail($validated['calle']);
+
             
             $direccion = Direccion::create([
-                'nombre' => $validated['calle'],
-                'idCalle' => $calle->id,
+                'idCalle'     => $calle->id,
                 'numInterior' => $validated['numero_interior'] ?? null,
-                'numExterior' => $validated['numero_exterior']
+                'numExterior' => $validated['numero_exterior'],
             ]);
+
 
             // --- USUARIO ---
             $usuario = new Usuario();
@@ -160,4 +162,42 @@ class RegistroController extends Controller
             return redirect()->back()->withInput()->withErrors(['error' => 'Error en el registro: ' . $e->getMessage()]);
         }
     }
+
+        // Mostrar formulario de registro
+    public function showRegistro()
+    {
+        $estados = Estado::all();
+        $habilidades = Habilidad::all();
+        return view('auth.registro', compact('estados','habilidades'));
+    }
+
+    public function getMunicipios($idEstado)
+    {
+        $municipios = Municipio::where('idEstado', $idEstado)->get(['id','nombre']);
+        return response()->json($municipios);
+    }
+
+    public function getColonias($idMunicipio)
+    {
+        $colonias = Colonia::where('idMunicipio', $idMunicipio)->get(['id','nombre']);
+        return response()->json($colonias);
+    }
+
+    public function getCalles($coloniaId)
+    {
+        $calles = Calle::where('idColonia', $coloniaId)->get(['id','nombre']);
+        return response()->json($calles);
+    }
+
+
+    public function showPerfil()
+    {
+        $usuario = Usuario::with('direccion.calle.colonia.municipio.estado')
+                ->find(Auth::id());
+        return view('perfil', compact('usuario'));
+
+    }
+
+
+
 }

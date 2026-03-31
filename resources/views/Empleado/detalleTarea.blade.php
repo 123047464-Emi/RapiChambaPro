@@ -85,6 +85,11 @@
             object-fit: contain;
         }
 
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+        }
         .brand-name {
             font-size: 1.5rem;
             font-weight: bold;
@@ -442,8 +447,6 @@
                 padding: .8rem 1rem;
             }
 
-            .logo-circle { width: 46px; height: 46px; font-size: 1.1rem; }
-            .brand-name { font-size: 1.2rem; }
 
             .nav-menu { gap: 1.2rem; }
             .nav-menu a { font-size: .85rem; }
@@ -531,15 +534,6 @@
         font-size: 0.85rem;
     }
 
-    .logo-circle {
-        width: 50px;
-        height: 50px;
-    }
-
-    .brand-name {
-        font-size: 1.2rem;
-    }
-
     .nav-menu {
         font-size: 0.9rem;
     }
@@ -617,10 +611,10 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-section">
-            <div class="logo-circle">
-                <img src="{{ asset('img/Logo.png') }}" alt="Logo">
-            </div>
-            <div class="brand-name">RAPICHAMBA</div>
+                <div class="logo-circle">
+                    <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+                </div>
+            <span class="brand-name">Empleado</span>
         </div>
         <nav class="nav-menu">
             <a href="#">Inicio</a>
