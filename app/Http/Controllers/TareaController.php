@@ -145,7 +145,7 @@ class TareaController extends Controller
     public function index()
     {
         $tareas = Tareas::with('categoria')->get();
-        return view('Empleador.tareasIndex', compact('tareas'));
+        #return view('Empleador.tareasIndex', compact('tareas'));
     }
 
 
