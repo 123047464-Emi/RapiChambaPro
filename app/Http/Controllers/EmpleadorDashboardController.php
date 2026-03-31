@@ -14,6 +14,6 @@ class EmpleadorDashboardController extends Controller
         // Traemos empleados con su usuario relacionado
         $empleados = Empleado::with('usuario')->get();
 
-        return view('empleador.dashboardEmpleador', compact('empleados'));
+        return view('Empleador.dashboardEmpleador', compact('empleados'));
     }
 }
