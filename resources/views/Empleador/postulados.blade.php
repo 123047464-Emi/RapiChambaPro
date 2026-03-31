@@ -21,14 +21,13 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--gray-bg);
-    color: var(--text);
-    min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
   }
-
   /* ── NAV ── */
   nav {
     background: var(--white);
@@ -86,13 +85,39 @@
   .nav-links a { font-weight: 600; font-size: .95rem; color: var(--text-muted); text-decoration: none; transition: color .2s; }
   .nav-links a:hover, .nav-links a.active { color: var(--blue); }
 
-  /* ── DECO CIRCLES ── */
-  .deco {
-    position: fixed; border-radius: 50%;
-    border: 28px solid var(--blue); opacity: .10; pointer-events: none; z-index: 0;
-  }
-  .deco-tr { width: 340px; height: 340px; top: -110px; right: -110px; }
-  .deco-bl { width: 280px; height: 280px; bottom: -90px; left: -90px; }
+        /* Círculos decorativos */
+        .circle-decoration {
+            position: fixed;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .circle-top-right {
+            width: 450px;
+            height: 450px;
+            top: -100px;
+            right: -300px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-top-right-second {
+            width: 500px;
+            height: 500px;
+            top: -100px;
+            right: -100px;
+            background: transparent;
+            border: 50px solid #1D40AE;
+        }
+
+        .circle-bottom-left {
+            width: 550px;
+            height: 550px;
+            bottom: -225px; 
+            left: -200px;
+            background: transparent;
+            border: 60px solid #1D40AE;
+        }
 
   /* ── PAGE LAYOUT ── */
   .page { max-width: 1180px; margin: 0 auto; padding: 36px 24px; position: relative; z-index: 1; }
@@ -496,6 +521,40 @@
     text-align: center;
     padding: 40px 0;
     }
+       .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+
+        .logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        
+        .logo-circle {
+            width: 70px;
+            height: 70px;
+        }
 
     /* ══════════════════════════════
     RESPONSIVE
@@ -549,21 +608,23 @@
 <body>
 
 <!-- Deco -->
-<div class="deco deco-tr"></div>
-<div class="deco deco-bl"></div>
-
+    <!-- Círculos decorativos -->
+    <div class="circle-decoration circle-top-right"></div>
+    <div class="circle-decoration circle-top-right-second"></div>
+    <div class="circle-decoration circle-bottom-left"></div>
 <!-- Nav -->
 <nav>
-  <a class="nav-brand" href="#">
-    <div class="nav-logo">
-      <img src="" alt="Logo RapiChamba"/>
-    </div>
-    <span>RAPICHAMBA</span>
-  </a>
+        <div class="logo-section">
+                <div class="logo-circle">
+                    <img src="{{ asset('img/Logo.png') }}" alt="Logo" class="logo-img">
+                </div>
+            <span class="brand-name">RAPICHAMBA</span>
+        </div>
   <div class="nav-links">
-    <a href="#">Inicio</a>
-    <a href="#" class="active">Perfil</a>
-    <a href="#">Notificaciones</a>
+        <a href="{{ route('empleador.dashboardEmpleador') }}">Inicio</a>
+        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Mensajes</a>
+        <a href="{{ route('empleador.tareasPublicadas') }}">Tareas Publicadas</a>
+        <a href="{{ route('Empleador.SiTerminarEmpleador') }}">Notificaciones</a>
   </div>
   <button class="nav-hamburger" id="hamburger" aria-label="Menú">
     <span></span><span></span><span></span>
