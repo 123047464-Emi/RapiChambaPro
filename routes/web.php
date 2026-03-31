@@ -15,6 +15,7 @@ use App\Http\Controllers\EmpleadoController;
 use App\Http\Controllers\TareaController;
 use App\Http\Controllers\DashboardEmpleadorController;;
 
+
 #Route::get('/perfilempleado', [EmpleadoController::class, 'perfil'])
     #->middleware('auth')   // Protege el guardado del empleado
     #->name('empleado.perfilEmpleado');
@@ -68,6 +69,7 @@ Route::get('/registro', [RegistroController::class, 'showRegistro'])->name('regi
 Route::get('/municipios/{idEstados}', [RegistroController::class, 'getMunicipios']);
 Route::get('/colonias/{municipioId}', [RegistroController::class, 'getColonias']);
 Route::get('/calles/{coloniaId}', [RegistroController::class, 'getCalles']);
+
 
 
 
@@ -190,8 +192,8 @@ Route::get('/publicar-chamba', function () {
         return redirect()->route('empleador.crearTarea');
     }
 
-    // 4. Si YA tiene una -> mandarlo a precios
-    return redirect()->route('precios');
+    // 4. Si YA tiene una -> mandarlo a seguir creando Tarea
+    return redirect()->route('empleador.crearTarea');
 
 })->name('empleador.publicar');
 
