@@ -29,7 +29,7 @@ class DashboardEmpleadorController extends Controller
 
 
 
-        return view('empleador.tareasPublicadas', compact('tareas'));
+        return view('Empleador.tareasPublicadas', compact('tareas'));
     }
 
 
