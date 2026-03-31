@@ -31,7 +31,7 @@ class EmpleadoController extends Controller
         $empleado = Empleado::where('idUsuario', $usuario->id)->first();
 
         if (!$empleado) {
-            return view('empleado.misChambas', [
+            return view('Empleado.misChambas', [
                 'contratos' => collect(),
                 'calificaciones' => collect(),
                 'totalPostulaciones' => 0,
@@ -83,7 +83,7 @@ class EmpleadoController extends Controller
             ->take(5)
             ->get();
 
-        return view('empleado.misChambas', compact(
+        return view('Empleado.misChambas', compact(
             'contratos',
             'calificaciones',
             'totalPostulaciones',
@@ -106,7 +106,7 @@ class EmpleadoController extends Controller
         // Buscar el empleado ligado al usuario autenticado
         $empleado = Empleado::where('idUsuario', $usuario->id)->first();
 
-        return view('empleado.perfil', compact('empleado'));
+        return view('Empleado.perfil', compact('empleado'));
     }
 
 }
