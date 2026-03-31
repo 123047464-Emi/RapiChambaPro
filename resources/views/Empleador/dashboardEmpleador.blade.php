@@ -403,7 +403,7 @@
         <!-- Professionals Section -->
  <!-- Professionals Section -->
         <div class="professionals-section">
-            <h2 class="section-title">Profesionales Recomendados</h2>
+            <h2 class="section-title">Perfiles Recomendados</h2>
             <div class="professionals-grid">
                 @foreach($empleados as $empleado)
                     <div class="professional-card">
