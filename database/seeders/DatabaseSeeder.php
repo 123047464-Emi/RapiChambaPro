@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             CallesSeeder::class,
             CategoriasSeeder::class,
             EstatusSeeder::class,
+            HabilidadesSeeder::class,
         ]);
         // User::factory(10)->create();
 
