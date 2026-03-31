@@ -15,9 +15,6 @@ return new class extends Migration
             $table->string('numInterior')->nullable();
             $table->string('numExterior')->nullable();
 
-            //coordenadas
-            $table->decimal('latitud', 10, 7)->nullable();
-            $table->decimal('longitud', 10, 7)->nullable();
             $table->timestamps();
         });
     }
